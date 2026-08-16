@@ -3,283 +3,432 @@
 
 <head>
 
-  <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
 
-  <title>Patron Crochet AI</title>
+<title>Patron Crochet AI</title>
 
-  <style>
+<style>
 
-    * {
-      box-sizing: border-box;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f2ed;
-      color: #222;
-    }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f2ed;
+  color: #222;
+}
 
-    header {
-      background: #222;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
+header {
+  background: #222;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
 
-    header h1 {
-      margin: 0;
-      font-size: 24px;
-    }
+header h1 {
+  margin: 0;
+  font-size: 24px;
+}
 
-    header p {
-      margin: 6px 0 0;
-      opacity: 0.8;
-      font-size: 14px;
-    }
+header p {
+  margin: 6px 0 0;
+  opacity: .8;
+  font-size: 14px;
+}
 
-    main {
-      max-width: 800px;
-      margin: auto;
-      padding: 16px;
-    }
+main {
+  max-width: 850px;
+  margin: auto;
+  padding: 16px;
+}
 
-    .card {
-      background: white;
-      border-radius: 14px;
-      padding: 18px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    }
+.card {
+  background: white;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.08);
+}
 
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 7px;
-    }
+h2 {
+  margin-top: 0;
+}
 
-    input,
-    select,
-    button {
-      width: 100%;
-      min-height: 46px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      padding: 10px;
-      font-size: 16px;
-    }
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 7px;
+}
 
-    input,
-    select {
-      background: white;
-      margin-bottom: 14px;
-    }
+input,
+select,
+button {
+  font-family: inherit;
+}
 
-    button {
-      background: #222;
-      color: white;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-    }
+input[type="file"],
+select {
+  width: 100%;
+  min-height: 46px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 16px;
+  background: white;
+  margin-bottom: 14px;
+}
 
-    button:disabled {
-      opacity: 0.5;
-      cursor: default;
-    }
+button {
+  border: none;
+  border-radius: 9px;
+  background: #222;
+  color: white;
+  min-height: 46px;
+  padding: 10px 16px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
 
-    .dimensions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
+button:disabled {
+  opacity: .5;
+}
 
-    #preview {
-      width: 100%;
-      max-height: 300px;
-      object-fit: contain;
-      display: none;
-      border-radius: 10px;
-      margin-top: 12px;
-    }
+.dimensions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
 
-    #status {
-      margin-top: 12px;
-      font-size: 14px;
-      color: #666;
-      text-align: center;
-      line-height: 1.5;
-    }
+#preview {
+  width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+  display: none;
+  border-radius: 10px;
+  margin-top: 12px;
+}
 
-    /*
-     * =========================================
-     * CONTENEUR DU PATRON
-     * =========================================
-     */
+#status {
+  margin-top: 12px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+}
 
-    #patternContainer {
-      overflow: auto;
-      max-width: 100%;
-      padding: 14px;
-      background: #eee;
-      border-radius: 10px;
-      -webkit-overflow-scrolling: touch;
-    }
 
-    /*
-     * =========================================
-     * CONTROLES DU ZOOM
-     * =========================================
-     */
+/* ==================================================
+   ZOOM
+   ================================================== */
 
-    .zoomControls {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 14px;
-    }
+.zoomControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
 
-    .zoomControls button {
-      width: 52px;
-      min-height: 44px;
-      padding: 5px;
-      font-size: 22px;
-      flex-shrink: 0;
-    }
+.zoomControls button {
+  width: 50px;
+  min-height: 44px;
+  padding: 5px;
+  font-size: 22px;
+}
 
-    #zoomReset {
-      width: 90px;
-      font-size: 14px;
-    }
+.zoomControls #fitScreen {
+  width: auto;
+  font-size: 13px;
+  padding: 8px 12px;
+}
 
-    #zoomLabel {
-      min-width: 58px;
-      text-align: center;
-      font-weight: bold;
-      font-size: 14px;
-    }
+#zoomReset {
+  width: 80px;
+  font-size: 13px;
+}
 
-    /*
-     * =========================================
-     * GRILLE
-     * =========================================
-     */
+#zoomLabel {
+  min-width: 55px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+}
 
-    #pattern {
-      display: grid;
-      width: max-content;
-      margin: auto;
-      border-top: 1px solid rgba(0,0,0,0.25);
-      border-left: 1px solid rgba(0,0,0,0.25);
-      transform-origin: top left;
-    }
 
-    .cell {
-      border-right: 1px solid rgba(0,0,0,0.25);
-      border-bottom: 1px solid rgba(0,0,0,0.25);
-      cursor: pointer;
-      user-select: none;
-      -webkit-user-select: none;
-      touch-action: manipulation;
-    }
+/* ==================================================
+   CONTENEUR GRILLE
+   ================================================== */
 
-    .cell:active {
-      opacity: 0.7;
-    }
+#patternContainer {
+  width: 100%;
+  overflow: auto;
+  background: #eee;
+  border-radius: 10px;
+  padding: 12px;
+  -webkit-overflow-scrolling: touch;
+}
 
-    /*
-     * =========================================
-     * PALETTE
-     * =========================================
-     */
+#pattern {
+  display: grid;
+  width: max-content;
+  margin: auto;
+  border-left: 1px solid rgba(0,0,0,.25);
+  border-top: 1px solid rgba(0,0,0,.25);
+}
 
-    .palette {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 12px;
-    }
+.cell {
+  border-right: 1px solid rgba(0,0,0,.25);
+  border-bottom: 1px solid rgba(0,0,0,.25);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
 
-    .paletteColor {
-      width: 46px;
-      height: 46px;
-      min-height: 46px;
-      padding: 0;
-      border-radius: 9px;
-      border: 3px solid white;
-      box-shadow: 0 0 0 1px #aaa;
-      cursor: pointer;
-    }
 
-    .paletteColor.selected {
-      box-shadow: 0 0 0 3px #222;
-      transform: scale(1.08);
-    }
+/* ==================================================
+   PALETTE IA
+   ================================================== */
 
-    .paletteName {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #555;
-      text-align: center;
-    }
+.palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
 
-    .info {
-      font-size: 13px;
-      color: #666;
-      line-height: 1.5;
-    }
+.paletteItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
 
-    .editHint {
-      background: #f5f2ed;
-      border-radius: 8px;
-      padding: 10px;
-      margin-top: 12px;
-      font-size: 13px;
-      text-align: center;
-      color: #555;
-    }
+.paletteColor {
+  width: 48px;
+  height: 48px;
+  min-height: 48px;
+  padding: 0;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 0 0 1px #aaa;
+}
 
-    /*
-     * =========================================
-     * MOBILE
-     * =========================================
-     */
+.paletteItem.selected .paletteColor {
+  box-shadow: 0 0 0 3px #222;
+  transform: scale(1.08);
+}
 
-    @media (max-width: 600px) {
+.paletteNumber {
+  font-size: 11px;
+  color: #666;
+}
 
-      main {
-        padding: 10px;
-      }
 
-      .card {
-        padding: 16px;
-      }
+/* ==================================================
+   EDITEUR DE COULEUR
+   ================================================== */
 
-      .dimensions {
-        gap: 8px;
-      }
+#colorEditor {
+  display: none;
+  margin-top: 18px;
+  padding: 16px;
+  background: #f5f2ed;
+  border-radius: 12px;
+}
 
-      .zoomControls {
-        gap: 5px;
-      }
+#colorEditor h3 {
+  margin-top: 0;
+}
 
-      .zoomControls button {
-        width: 48px;
-      }
 
-      #zoomReset {
-        width: 78px;
-      }
+/* CERCLE CHROMATIQUE */
 
-    }
+.colorWheelWrapper {
+  display: flex;
+  justify-content: center;
+  margin: 15px 0;
+}
 
-  </style>
+#colorWheel {
+  width: 230px;
+  height: 230px;
+  border-radius: 50%;
+  position: relative;
+  cursor: crosshair;
+
+  background:
+    conic-gradient(
+      red,
+      yellow,
+      lime,
+      cyan,
+      blue,
+      magenta,
+      red
+    );
+
+  touch-action: none;
+
+  box-shadow:
+    inset 0 0 0 2px white,
+    0 0 0 1px #999;
+}
+
+#colorWheel::after {
+  content: "";
+  position: absolute;
+  inset: 18%;
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      white 0%,
+      rgba(255,255,255,0) 70%
+    );
+
+  pointer-events: none;
+}
+
+
+/* Curseur du cercle */
+
+#wheelCursor {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 3px solid white;
+  box-shadow: 0 0 0 2px #222;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 3;
+}
+
+
+/* ==================================================
+   16 COULEURS RAPIDES
+   ================================================== */
+
+.quickColors {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.quickColor {
+  width: 100%;
+  aspect-ratio: 1;
+  min-height: 32px;
+  border-radius: 7px;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px #aaa;
+  padding: 0;
+}
+
+.quickColor:hover {
+  transform: scale(1.08);
+}
+
+
+/* Couleur actuelle */
+
+.currentColorPreview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0;
+}
+
+#currentColorBox {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px #999;
+}
+
+#currentColorHex {
+  font-weight: bold;
+  font-family: monospace;
+}
+
+
+/* boutons éditeur */
+
+.editorButtons {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.editorButtons button {
+  flex: 1;
+}
+
+#cancelColor {
+  background: #777;
+}
+
+
+/* ==================================================
+   MESSAGE AIDE
+   ================================================== */
+
+.editHint {
+  background: #f5f2ed;
+  padding: 11px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: #555;
+  text-align: center;
+}
+
+
+/* ==================================================
+   MOBILE
+   ================================================== */
+
+@media (max-width: 600px) {
+
+  main {
+    padding: 10px;
+  }
+
+  .card {
+    padding: 15px;
+  }
+
+  .dimensions {
+    gap: 8px;
+  }
+
+  #colorWheel {
+    width: 210px;
+    height: 210px;
+  }
+
+  .quickColors {
+    grid-template-columns: repeat(8, 1fr);
+    gap: 6px;
+  }
+
+}
+
+</style>
 
 </head>
 
@@ -301,252 +450,323 @@
 <main>
 
 
-  <!-- =========================================
-       IMAGE
-       ========================================= -->
+<!-- ==================================================
+     IMAGE
+     ================================================== -->
 
-  <div class="card">
+<div class="card">
 
-    <label for="image">
-      1. Choisis ton image
-    </label>
+  <label for="image">
+    1. Choisis ton image
+  </label>
 
-    <input
-      type="file"
-      id="image"
-      accept="image/*"
-    >
+  <input
+    type="file"
+    id="image"
+    accept="image/*"
+  >
 
-    <img
-      id="preview"
-      alt="Aperçu de l'image"
-    >
+  <img
+    id="preview"
+    alt="Aperçu de l'image"
+  >
 
-  </div>
-
-
-  <!-- =========================================
-       DIMENSIONS
-       ========================================= -->
-
-  <div class="card">
-
-    <label>
-      2. Dimensions du patron
-    </label>
-
-    <div class="dimensions">
-
-      <div>
-
-        <label for="width">
-          Largeur
-        </label>
-
-        <select id="width">
-
-          <option>10</option>
-          <option>20</option>
-          <option>30</option>
-          <option>40</option>
-          <option>50</option>
-          <option selected>60</option>
-          <option>80</option>
-          <option>100</option>
-          <option>150</option>
-          <option>200</option>
-          <option>300</option>
-          <option>500</option>
-          <option>1000</option>
-          <option>2000</option>
-
-        </select>
-
-      </div>
+</div>
 
 
-      <div>
+<!-- ==================================================
+     DIMENSIONS
+     ================================================== -->
 
-        <label for="height">
-          Hauteur
-        </label>
+<div class="card">
 
-        <select id="height">
+  <label>
+    2. Dimensions du patron
+  </label>
 
-          <option>10</option>
-          <option>20</option>
-          <option>30</option>
-          <option>40</option>
-          <option>50</option>
-          <option selected>60</option>
-          <option>80</option>
-          <option>100</option>
-          <option>150</option>
-          <option>200</option>
-          <option>300</option>
-          <option>500</option>
-          <option>1000</option>
-          <option>2000</option>
+  <div class="dimensions">
 
-        </select>
+    <div>
 
-      </div>
+      <label for="width">
+        Largeur
+      </label>
+
+      <select id="width">
+
+        <option>10</option>
+        <option>20</option>
+        <option>30</option>
+        <option>40</option>
+        <option>50</option>
+        <option selected>60</option>
+        <option>80</option>
+        <option>100</option>
+        <option>150</option>
+        <option>200</option>
+        <option>300</option>
+        <option>500</option>
+        <option>1000</option>
+        <option>2000</option>
+
+      </select>
+
+    </div>
+
+
+    <div>
+
+      <label for="height">
+        Hauteur
+      </label>
+
+      <select id="height">
+
+        <option>10</option>
+        <option>20</option>
+        <option>30</option>
+        <option>40</option>
+        <option>50</option>
+        <option selected>60</option>
+        <option>80</option>
+        <option>100</option>
+        <option>150</option>
+        <option>200</option>
+        <option>300</option>
+        <option>500</option>
+        <option>1000</option>
+        <option>2000</option>
+
+      </select>
 
     </div>
 
   </div>
 
+</div>
 
-  <!-- =========================================
-       NOMBRE DE COULEURS
-       ========================================= -->
 
-  <div class="card">
+<!-- ==================================================
+     COULEURS
+     ================================================== -->
 
-    <label for="colors">
-      3. Nombre de couleurs
-    </label>
+<div class="card">
 
-    <select id="colors">
+  <label for="colors">
+    3. Nombre de couleurs
+  </label>
 
-      <option>1</option>
-      <option selected>2</option>
-      <option>3</option>
-      <option>4</option>
-      <option>5</option>
-      <option>6</option>
-      <option>8</option>
-      <option>10</option>
-      <option>12</option>
-      <option>16</option>
-      <option>20</option>
+  <select id="colors">
 
-    </select>
+    <option>1</option>
+    <option selected>2</option>
+    <option>3</option>
+    <option>4</option>
+    <option>5</option>
+    <option>6</option>
+    <option>8</option>
+    <option>10</option>
+    <option>12</option>
+    <option>16</option>
+    <option>20</option>
 
+  </select>
+
+</div>
+
+
+<!-- ==================================================
+     GENERATION
+     ================================================== -->
+
+<div class="card">
+
+  <button id="generate">
+    🧠 Analyser et créer mon patron
+  </button>
+
+  <div id="status">
+    Aucune image analysée pour le moment.
   </div>
 
-
-  <!-- =========================================
-       GENERATION
-       ========================================= -->
-
-  <div class="card">
-
-    <button id="generate">
-      🧠 Analyser et créer mon patron
-    </button>
-
-    <div id="status">
-      Aucune image analysée pour le moment.
-    </div>
-
-  </div>
+</div>
 
 
-  <!-- =========================================
-       PATRON
-       ========================================= -->
+<!-- ==================================================
+     PATRON
+     ================================================== -->
 
-  <div class="card">
+<div class="card">
 
-    <h2>
-      Ton patron
-    </h2>
+  <h2>
+    Ton patron
+  </h2>
 
-
-    <div
-      id="patternArea"
-      style="display:none;"
-    >
-
-
-      <!-- CONTROLES ZOOM -->
-
-      <div class="zoomControls">
-
-        <button
-          id="zoomOut"
-          type="button"
-          aria-label="Dézoomer"
-        >
-          −
-        </button>
-
-
-        <button
-          id="zoomReset"
-          type="button"
-        >
-          100 %
-        </button>
-
-
-        <button
-          id="zoomIn"
-          type="button"
-          aria-label="Zoomer"
-        >
-          +
-        </button>
-
-
-        <span id="zoomLabel">
-          100 %
-        </span>
-
-      </div>
-
-
-      <div class="editHint">
-        🎨 Sélectionne une couleur dans la palette,
-        puis touche une case du patron pour la modifier.
-      </div>
-
-
-      <div id="patternContainer">
-
-        <div id="pattern"></div>
-
-      </div>
-
-
-    </div>
-
-  </div>
-
-
-  <!-- =========================================
-       PALETTE
-       ========================================= -->
 
   <div
-    class="card"
-    id="paletteCard"
+    id="patternArea"
     style="display:none;"
   >
 
-    <h2>
-      🎨 Palette du patron
-    </h2>
 
-    <p class="info">
-      Sélectionne une couleur puis clique sur les
-      mailles que tu veux modifier.
-    </p>
+    <div class="zoomControls">
 
-    <div
-      id="palette"
-      class="palette"
-    ></div>
+      <button
+        id="zoomOut"
+        type="button"
+      >
+        −
+      </button>
 
-    <div
-      id="paletteName"
-      class="paletteName"
-    >
-      Aucune couleur sélectionnée.
+
+      <button
+        id="zoomReset"
+        type="button"
+      >
+        100 %
+      </button>
+
+
+      <button
+        id="zoomIn"
+        type="button"
+      >
+        +
+      </button>
+
+
+      <button
+        id="fitScreen"
+        type="button"
+      >
+        📱 Adapter à l'écran
+      </button>
+
+
+      <span id="zoomLabel">
+        100 %
+      </span>
+
+    </div>
+
+
+    <div class="editHint">
+
+      🎨 Sélectionne une couleur ci-dessous,
+      puis touche une maille pour lui appliquer cette couleur.
+
+    </div>
+
+
+    <div id="patternContainer">
+
+      <div id="pattern"></div>
+
     </div>
 
   </div>
+
+</div>
+
+
+<!-- ==================================================
+     PALETTE
+     ================================================== -->
+
+<div
+  class="card"
+  id="paletteCard"
+  style="display:none;"
+>
+
+  <h2>
+    🎨 Couleurs du patron
+  </h2>
+
+  <p class="editHint">
+
+    Clique sur une couleur pour la modifier.
+    Tu peux choisir une couleur dans le cercle
+    chromatique ou parmi les 16 couleurs rapides.
+
+  </p>
+
+
+  <div
+    id="palette"
+    class="palette"
+  ></div>
+
+
+  <!-- ==================================================
+       EDITEUR
+       ================================================== -->
+
+  <div id="colorEditor">
+
+    <h3>
+      Modifier cette couleur
+    </h3>
+
+
+    <div class="currentColorPreview">
+
+      <div id="currentColorBox"></div>
+
+      <div id="currentColorHex">
+        #000000
+      </div>
+
+    </div>
+
+
+    <div class="colorWheelWrapper">
+
+      <div
+        id="colorWheel"
+      >
+
+        <div
+          id="wheelCursor"
+        ></div>
+
+      </div>
+
+    </div>
+
+
+    <h3>
+      🎨 16 couleurs rapides
+    </h3>
+
+
+    <div
+      id="quickColors"
+      class="quickColors"
+    ></div>
+
+
+    <div class="editorButtons">
+
+      <button
+        id="cancelColor"
+        type="button"
+      >
+        Annuler
+      </button>
+
+      <button
+        id="applyColor"
+        type="button"
+      >
+        ✅ Appliquer
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
 
 
 </main>
@@ -555,803 +775,1235 @@
 <script>
 
 
-  /*
-   * =========================================
-   * ELEMENTS
-   * =========================================
-   */
+/* ==================================================
+   ELEMENTS
+   ================================================== */
 
-  const imageInput =
-    document.getElementById("image");
+const imageInput =
+  document.getElementById("image");
 
-  const preview =
-    document.getElementById("preview");
+const preview =
+  document.getElementById("preview");
 
-  const generateButton =
-    document.getElementById("generate");
+const generateButton =
+  document.getElementById("generate");
 
-  const status =
-    document.getElementById("status");
+const status =
+  document.getElementById("status");
 
-  const patternArea =
-    document.getElementById("patternArea");
+const patternArea =
+  document.getElementById("patternArea");
 
-  const patternContainer =
-    document.getElementById("patternContainer");
+const patternContainer =
+  document.getElementById("patternContainer");
 
-  const pattern =
-    document.getElementById("pattern");
+const pattern =
+  document.getElementById("pattern");
 
-  const paletteCard =
-    document.getElementById("paletteCard");
+const paletteCard =
+  document.getElementById("paletteCard");
 
-  const palette =
-    document.getElementById("palette");
+const palette =
+  document.getElementById("palette");
 
-  const paletteName =
-    document.getElementById("paletteName");
+const colorEditor =
+  document.getElementById("colorEditor");
 
-  const zoomIn =
-    document.getElementById("zoomIn");
+const colorWheel =
+  document.getElementById("colorWheel");
 
-  const zoomOut =
-    document.getElementById("zoomOut");
+const wheelCursor =
+  document.getElementById("wheelCursor");
 
-  const zoomReset =
-    document.getElementById("zoomReset");
+const quickColors =
+  document.getElementById("quickColors");
 
-  const zoomLabel =
-    document.getElementById("zoomLabel");
+const currentColorBox =
+  document.getElementById("currentColorBox");
 
+const currentColorHex =
+  document.getElementById("currentColorHex");
 
-  /*
-   * =========================================
-   * VARIABLES
-   * =========================================
-   */
+const applyColor =
+  document.getElementById("applyColor");
 
-  let imageData = null;
+const cancelColor =
+  document.getElementById("cancelColor");
 
-  let currentPalette = [];
+const zoomIn =
+  document.getElementById("zoomIn");
 
-  let selectedColor = null;
+const zoomOut =
+  document.getElementById("zoomOut");
 
-  let currentGrid = null;
+const zoomReset =
+  document.getElementById("zoomReset");
 
-  let zoomLevel = 1;
+const fitScreen =
+  document.getElementById("fitScreen");
 
+const zoomLabel =
+  document.getElementById("zoomLabel");
 
-  const MIN_ZOOM = 0.5;
 
-  const MAX_ZOOM = 3;
+/* ==================================================
+   VARIABLES
+   ================================================== */
 
-  const ZOOM_STEP = 0.25;
+let imageData = null;
 
-  const BASE_CELL_SIZE = 22;
+let currentPalette = [];
 
+let currentGrid = null;
 
-  /*
-   * =========================================
-   * COMPRESSION IMAGE
-   * =========================================
-   */
+let selectedPaletteIndex = null;
 
-  function compressImage(file) {
+let editingPaletteIndex = null;
 
-    return new Promise(
-      function(resolve, reject) {
+let editingColor = "#000000";
 
-        const reader =
-          new FileReader();
+let zoomLevel = 1;
 
+const BASE_CELL_SIZE = 22;
 
-        reader.onload =
-          function(event) {
+const MIN_ZOOM = 0.10;
 
-            const img =
-              new Image();
+const MAX_ZOOM = 3;
 
+const ZOOM_STEP = 0.10;
 
-            img.onload =
-              function() {
 
-                const MAX_SIZE = 1600;
+/* ==================================================
+   16 COULEURS RAPIDES
+   ================================================== */
 
-                let width =
-                  img.width;
+const QUICK_COLORS = [
 
-                let height =
-                  img.height;
+  "#000000",
+  "#FFFFFF",
+  "#FF0000",
+  "#FF8000",
+  "#FFFF00",
+  "#00CC44",
+  "#00BFFF",
+  "#0047FF",
 
+  "#8000FF",
+  "#FF00AA",
+  "#8B4513",
+  "#C0C0C0",
+  "#808080",
+  "#FFC0CB",
+  "#00A86B",
+  "#F5DEB3"
 
-                if (
-                  width > MAX_SIZE ||
-                  height > MAX_SIZE
-                ) {
+];
 
-                  if (width > height) {
 
-                    height =
-                      Math.round(
-                        height *
-                        MAX_SIZE /
-                        width
-                      );
+/* ==================================================
+   CREATION DES 16 COULEURS
+   ================================================== */
 
-                    width =
-                      MAX_SIZE;
+QUICK_COLORS.forEach(
+  function(color) {
 
-                  }
+    const button =
+      document.createElement("button");
 
-                  else {
+    button.type =
+      "button";
 
-                    width =
-                      Math.round(
-                        width *
-                        MAX_SIZE /
-                        height
-                      );
+    button.className =
+      "quickColor";
 
-                    height =
-                      MAX_SIZE;
+    button.style.background =
+      color;
 
-                  }
+    button.title =
+      color;
 
-                }
+    button.addEventListener(
+      "click",
+      function() {
 
-
-                const canvas =
-                  document.createElement(
-                    "canvas"
-                  );
-
-
-                canvas.width =
-                  width;
-
-                canvas.height =
-                  height;
-
-
-                const ctx =
-                  canvas.getContext(
-                    "2d"
-                  );
-
-
-                ctx.drawImage(
-                  img,
-                  0,
-                  0,
-                  width,
-                  height
-                );
-
-
-                const compressed =
-                  canvas.toDataURL(
-                    "image/jpeg",
-                    0.82
-                  );
-
-
-                resolve(
-                  compressed
-                );
-
-              };
-
-
-            img.onerror =
-              function() {
-
-                reject(
-                  new Error(
-                    "Impossible de lire l'image."
-                  )
-                );
-
-              };
-
-
-            img.src =
-              event.target.result;
-
-          };
-
-
-        reader.onerror =
-          function() {
-
-            reject(
-              new Error(
-                "Impossible de charger l'image."
-              )
-            );
-
-          };
-
-
-        reader.readAsDataURL(file);
+        setEditingColor(color);
 
       }
     );
 
+    quickColors.appendChild(button);
+
   }
+);
 
 
-  /*
-   * =========================================
-   * PREVISUALISATION IMAGE
-   * =========================================
-   */
+/* ==================================================
+   IMAGE
+   ================================================== */
 
-  imageInput.addEventListener(
-    "change",
-    async function() {
+function compressImage(file) {
 
-      const file =
-        this.files[0];
+  return new Promise(
+    function(resolve, reject) {
 
+      const reader =
+        new FileReader();
 
-      if (!file) {
-        return;
-      }
+      reader.onload =
+        function(event) {
 
+          const img =
+            new Image();
 
-      try {
+          img.onload =
+            function() {
 
-        status.textContent =
-          "Préparation de l'image…";
+              const MAX_SIZE = 1600;
 
+              let width =
+                img.width;
 
-        imageData =
-          await compressImage(file);
-
-
-        preview.src =
-          imageData;
+              let height =
+                img.height;
 
 
-        preview.style.display =
-          "block";
+              if (
+                width > MAX_SIZE ||
+                height > MAX_SIZE
+              ) {
+
+                if (
+                  width > height
+                ) {
+
+                  height =
+                    Math.round(
+                      height *
+                      MAX_SIZE /
+                      width
+                    );
+
+                  width =
+                    MAX_SIZE;
+
+                }
+
+                else {
+
+                  width =
+                    Math.round(
+                      width *
+                      MAX_SIZE /
+                      height
+                    );
+
+                  height =
+                    MAX_SIZE;
+
+                }
+
+              }
 
 
-        const sizeKB =
-          Math.round(
-            imageData.length *
-            0.75 /
-            1024
+              const canvas =
+                document.createElement(
+                  "canvas"
+                );
+
+              canvas.width =
+                width;
+
+              canvas.height =
+                height;
+
+
+              const ctx =
+                canvas.getContext(
+                  "2d"
+                );
+
+
+              ctx.drawImage(
+                img,
+                0,
+                0,
+                width,
+                height
+              );
+
+
+              resolve(
+                canvas.toDataURL(
+                  "image/jpeg",
+                  .82
+                )
+              );
+
+            };
+
+
+          img.onerror =
+            function() {
+
+              reject(
+                new Error(
+                  "Impossible de lire l'image."
+                )
+              );
+
+            };
+
+
+          img.src =
+            event.target.result;
+
+        };
+
+
+      reader.onerror =
+        function() {
+
+          reject(
+            new Error(
+              "Impossible de charger l'image."
+            )
           );
 
-
-        status.textContent =
-          "Image prête. Taille préparée : "
-          +
-          sizeKB
-          +
-          " Ko.";
-
-      }
+        };
 
 
-      catch (error) {
-
-        imageData = null;
-
-        status.textContent =
-          "❌ "
-          +
-          error.message;
-
-      }
+      reader.readAsDataURL(file);
 
     }
   );
 
-
-  /*
-   * =========================================
-   * GENERATION
-   * =========================================
-   */
-
-  generateButton.addEventListener(
-    "click",
-    async function() {
+}
 
 
-      if (!imageData) {
+imageInput.addEventListener(
+  "change",
+  async function() {
 
-        status.textContent =
-          "⚠️ Choisis d'abord une image.";
+    const file =
+      this.files[0];
 
-        return;
-
-      }
-
-
-      const width =
-        Number(
-          document.getElementById(
-            "width"
-          ).value
-        );
+    if (!file) {
+      return;
+    }
 
 
-      const height =
-        Number(
-          document.getElementById(
-            "height"
-          ).value
-        );
+    try {
+
+      status.textContent =
+        "Préparation de l'image…";
 
 
-      const colors =
-        Number(
-          document.getElementById(
-            "colors"
-          ).value
-        );
+      imageData =
+        await compressImage(file);
 
 
-      generateButton.disabled =
-        true;
+      preview.src =
+        imageData;
 
-
-      generateButton.textContent =
-        "🧠 L'IA analyse ton image…";
+      preview.style.display =
+        "block";
 
 
       status.textContent =
-        "Envoi de l'image à l'IA…";
+        "Image prête. Tu peux lancer l'analyse.";
+
+    }
+
+    catch (error) {
+
+      imageData = null;
+
+      status.textContent =
+        "❌ " +
+        error.message;
+
+    }
+
+  }
+);
 
 
-      patternArea.style.display =
-        "none";
+/* ==================================================
+   GENERATION
+   ================================================== */
+
+generateButton.addEventListener(
+  "click",
+  async function() {
+
+    if (!imageData) {
+
+      status.textContent =
+        "⚠️ Choisis d'abord une image.";
+
+      return;
+
+    }
 
 
-      paletteCard.style.display =
-        "none";
+    const width =
+      Number(
+        document.getElementById(
+          "width"
+        ).value
+      );
+
+    const height =
+      Number(
+        document.getElementById(
+          "height"
+        ).value
+      );
+
+    const colors =
+      Number(
+        document.getElementById(
+          "colors"
+        ).value
+      );
+
+
+    generateButton.disabled =
+      true;
+
+    generateButton.textContent =
+      "🧠 L'IA analyse ton image…";
+
+
+    status.textContent =
+      "Envoi de l'image à l'IA…";
+
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/analyze",
+          {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify({
+
+                image:
+                  imageData,
+
+                width:
+                  width,
+
+                height:
+                  height,
+
+                colors:
+                  colors
+
+              })
+
+          }
+        );
+
+
+      const responseText =
+        await response.text();
+
+
+      let result;
 
 
       try {
 
-
-        /*
-         * ENVOI A L'API
-         */
-
-        const response =
-          await fetch(
-            "/api/analyze",
-            {
-
-              method: "POST",
-
-              headers: {
-                "Content-Type":
-                  "application/json"
-              },
-
-              body:
-                JSON.stringify({
-
-                  image:
-                    imageData,
-
-                  width:
-                    width,
-
-                  height:
-                    height,
-
-                  colors:
-                    colors
-
-                })
-
-            }
-          );
-
-
-        /*
-         * LECTURE TEXTE
-         */
-
-        const responseText =
-          await response.text();
-
-
-        let result;
-
-
-        try {
-
-          result =
-            JSON.parse(
-              responseText
-            );
-
-        }
-
-
-        catch (jsonError) {
-
-          console.error(
-            "Réponse serveur :",
+        result =
+          JSON.parse(
             responseText
           );
 
-
-          if (
-            response.status === 413
-          ) {
-
-            throw new Error(
-              "Image encore trop lourde pour le serveur."
-            );
-
-          }
-
-
-          throw new Error(
-            "Le serveur n'a pas renvoyé une réponse valide. Code : "
-            +
-            response.status
-          );
-
-        }
-
-
-        if (!response.ok) {
-
-          throw new Error(
-            result.error ||
-            "Erreur du serveur."
-          );
-
-        }
-
-
-        /*
-         * =================================
-         * PALETTE
-         * =================================
-         */
-
-        currentPalette =
-          result.palette || [];
-
-
-        selectedColor =
-          null;
-
-
-        palette.innerHTML =
-          "";
-
-
-        paletteName.textContent =
-          "Aucune couleur sélectionnée.";
-
-
-        currentPalette.forEach(
-          function(color, index) {
-
-
-            const colorButton =
-              document.createElement(
-                "button"
-              );
-
-
-            colorButton.type =
-              "button";
-
-
-            colorButton.className =
-              "paletteColor";
-
-
-            colorButton.style.background =
-              color;
-
-
-            colorButton.title =
-              "Couleur "
-              +
-              (index + 1)
-              +
-              " : "
-              +
-              color;
-
-
-            colorButton.setAttribute(
-              "aria-label",
-              "Sélectionner la couleur " +
-              (index + 1)
-            );
-
-
-            colorButton.addEventListener(
-              "click",
-              function() {
-
-
-                selectedColor =
-                  index;
-
-
-                document
-                  .querySelectorAll(
-                    ".paletteColor"
-                  )
-                  .forEach(
-                    function(button) {
-
-                      button.classList
-                        .remove(
-                          "selected"
-                        );
-
-                    }
-                  );
-
-
-                colorButton.classList
-                  .add(
-                    "selected"
-                  );
-
-
-                paletteName.textContent =
-                  "Couleur sélectionnée : "
-                  +
-                  color;
-
-              }
-            );
-
-
-            palette.appendChild(
-              colorButton
-            );
-
-          }
-        );
-
-
-        if (
-          currentPalette.length > 0
-        ) {
-
-          paletteCard.style.display =
-            "block";
-
-        }
-
-
-        /*
-         * =================================
-         * GRILLE
-         * =================================
-         */
-
-        currentGrid =
-          result.grid;
-
-
-        zoomLevel =
-          1;
-
-
-        updateZoom();
-
-
-        createGrid(
-          currentGrid,
-          currentPalette
-        );
-
-
-        patternArea.style.display =
-          "block";
-
-
-        status.textContent =
-          "✅ Patron généré : "
-          +
-          width
-          +
-          " × "
-          +
-          height
-          +
-          " mailles.";
-
-
       }
-
 
       catch (error) {
 
-        console.error(error);
-
-
-        status.textContent =
-          "❌ "
-          +
-          error.message;
+        throw new Error(
+          "L'IA a renvoyé une réponse invalide."
+        );
 
       }
 
 
-      finally {
+      if (!response.ok) {
 
-        generateButton.disabled =
-          false;
-
-
-        generateButton.textContent =
-          "🧠 Analyser et créer mon patron";
+        throw new Error(
+          result.error ||
+          "Erreur du serveur."
+        );
 
       }
+
+
+      if (
+        !Array.isArray(
+          result.grid
+        )
+      ) {
+
+        throw new Error(
+          "La grille reçue est invalide."
+        );
+
+      }
+
+
+      currentGrid =
+        result.grid;
+
+
+      currentPalette =
+        Array.isArray(
+          result.palette
+        )
+        ? result.palette
+        : [];
+
+
+      selectedPaletteIndex =
+        null;
+
+      editingPaletteIndex =
+        null;
+
+
+      createPalette();
+
+      createGrid();
+
+      zoomLevel = 1;
+
+      updateZoom();
+
+
+      patternArea.style.display =
+        "block";
+
+
+      paletteCard.style.display =
+        "block";
+
+
+      status.textContent =
+        "✅ Patron généré : "
+        +
+        width
+        +
+        " × "
+        +
+        height
+        +
+        " mailles.";
+
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      status.textContent =
+        "❌ " +
+        error.message;
+
+    }
+
+
+    finally {
+
+      generateButton.disabled =
+        false;
+
+      generateButton.textContent =
+        "🧠 Analyser et créer mon patron";
+
+    }
+
+  }
+);
+
+
+/* ==================================================
+   PALETTE IA
+   ================================================== */
+
+function createPalette() {
+
+  palette.innerHTML =
+    "";
+
+
+  currentPalette.forEach(
+    function(color, index) {
+
+      const item =
+        document.createElement(
+          "div"
+        );
+
+      item.className =
+        "paletteItem";
+
+
+      const button =
+        document.createElement(
+          "button"
+        );
+
+      button.type =
+        "button";
+
+      button.className =
+        "paletteColor";
+
+      button.style.background =
+        color;
+
+
+      const number =
+        document.createElement(
+          "div"
+        );
+
+      number.className =
+        "paletteNumber";
+
+      number.textContent =
+        "Couleur " +
+        (index + 1);
+
+
+      item.appendChild(
+        button
+      );
+
+      item.appendChild(
+        number
+      );
+
+
+      /*
+       * Cliquer sur une couleur
+       * ouvre l'éditeur.
+       */
+
+      button.addEventListener(
+        "click",
+        function() {
+
+          openColorEditor(
+            index
+          );
+
+        }
+      );
+
+
+      palette.appendChild(
+        item
+      );
 
     }
   );
 
-
-  /*
-   * =========================================
-   * CREATION DE LA GRILLE
-   * =========================================
-   */
-
-  function createGrid(
-    grid,
-    colors
-  ) {
+}
 
 
-    pattern.innerHTML =
-      "";
+/* ==================================================
+   OUVRIR EDITEUR
+   ================================================== */
+
+function openColorEditor(index) {
+
+  editingPaletteIndex =
+    index;
+
+  editingColor =
+    currentPalette[index] ||
+    "#000000";
 
 
-    if (
-      !Array.isArray(grid) ||
-      grid.length === 0
-    ) {
+  setEditingColor(
+    editingColor
+  );
 
-      throw new Error(
-        "L'IA n'a pas renvoyé de grille."
-      );
+
+  colorEditor.style.display =
+    "block";
+
+
+  colorEditor.scrollIntoView({
+    behavior: "smooth",
+    block: "nearest"
+  });
+
+}
+
+
+/* ==================================================
+   COULEUR HEX -> RGB
+   ================================================== */
+
+function hexToRgb(hex) {
+
+  hex =
+    hex.replace(
+      "#",
+      ""
+    );
+
+
+  return {
+
+    r:
+      parseInt(
+        hex.substring(0,2),
+        16
+      ),
+
+    g:
+      parseInt(
+        hex.substring(2,4),
+        16
+      ),
+
+    b:
+      parseInt(
+        hex.substring(4,6),
+        16
+      )
+
+  };
+
+}
+
+
+/* ==================================================
+   RGB -> HEX
+   ================================================== */
+
+function rgbToHex(
+  r,
+  g,
+  b
+) {
+
+  return "#" +
+
+    [r,g,b]
+      .map(
+        function(value) {
+
+          return value
+            .toString(16)
+            .padStart(2,"0");
+
+        }
+      )
+      .join("");
+
+}
+
+
+/* ==================================================
+   RGB -> HSV
+   ================================================== */
+
+function rgbToHsv(
+  r,
+  g,
+  b
+) {
+
+  r /= 255;
+  g /= 255;
+  b /= 255;
+
+
+  const max =
+    Math.max(
+      r,g,b
+    );
+
+  const min =
+    Math.min(
+      r,g,b
+    );
+
+  const d =
+    max - min;
+
+
+  let h = 0;
+
+  let s =
+    max === 0
+    ? 0
+    : d / max;
+
+  const v =
+    max;
+
+
+  if (d !== 0) {
+
+    switch(max) {
+
+      case r:
+
+        h =
+          ((g-b)/d)
+          %
+          6;
+
+        break;
+
+      case g:
+
+        h =
+          (b-r)/d + 2;
+
+        break;
+
+      case b:
+
+        h =
+          (r-g)/d + 4;
+
+        break;
 
     }
 
 
-    const columns =
-      grid[0].length;
+    h /= 6;
 
-
-    pattern.style.gridTemplateColumns =
-      `repeat(${columns}, ${BASE_CELL_SIZE}px)`;
-
-
-    grid.forEach(
-      function(row) {
-
-
-        row.forEach(
-          function(colorIndex) {
-
-
-            const cell =
-              document.createElement(
-                "div"
-              );
-
-
-            cell.className =
-              "cell";
-
-
-            cell.dataset.colorIndex =
-              colorIndex;
-
-
-            const color =
-              colors[colorIndex];
-
-
-            cell.style.background =
-              color || "#ffffff";
-
-
-            cell.style.width =
-              BASE_CELL_SIZE + "px";
-
-
-            cell.style.height =
-              BASE_CELL_SIZE + "px";
-
-
-            /*
-             * =================================
-             * CHANGEMENT DE COULEUR
-             * =================================
-             */
-
-            cell.addEventListener(
-              "click",
-              function() {
-
-
-                if (
-                  selectedColor === null
-                ) {
-
-                  return;
-
-                }
-
-
-                const newColor =
-                  colors[selectedColor];
-
-
-                if (!newColor) {
-                  return;
-                }
-
-
-                cell.style.background =
-                  newColor;
-
-
-                cell.dataset.colorIndex =
-                  selectedColor;
-
-              }
-            );
-
-
-            pattern.appendChild(
-              cell
-            );
-
-          }
-        );
-
-      }
-    );
-
-
-    updateZoom();
+    if (h < 0) {
+      h += 1;
+    }
 
   }
 
 
+  return {
+    h: h * 360,
+    s: s * 100,
+    v: v * 100
+  };
+
+}
+
+
+/* ==================================================
+   HSV -> RGB
+   ================================================== */
+
+function hsvToRgb(
+  h,
+  s,
+  v
+) {
+
+  s /= 100;
+  v /= 100;
+
+  const c =
+    v * s;
+
+  const x =
+    c *
+    (
+      1 -
+      Math.abs(
+        (h / 60) % 2 - 1
+      )
+    );
+
+  const m =
+    v - c;
+
+
+  let r = 0;
+  let g = 0;
+  let b = 0;
+
+
+  if (h < 60) {
+
+    r = c;
+    g = x;
+
+  }
+
+  else if (h < 120) {
+
+    r = x;
+    g = c;
+
+  }
+
+  else if (h < 180) {
+
+    g = c;
+    b = x;
+
+  }
+
+  else if (h < 240) {
+
+    g = x;
+    b = c;
+
+  }
+
+  else if (h < 300) {
+
+    r = x;
+    b = c;
+
+  }
+
+  else {
+
+    r = c;
+    b = x;
+
+  }
+
+
+  return {
+
+    r:
+      Math.round(
+        (r+m)*255
+      ),
+
+    g:
+      Math.round(
+        (g+m)*255
+      ),
+
+    b:
+      Math.round(
+        (b+m)*255
+      )
+
+  };
+
+}
+
+
+/* ==================================================
+   CHOISIR COULEUR
+   ================================================== */
+
+function setEditingColor(color) {
+
+  editingColor =
+    color;
+
+
+  currentColorBox.style.background =
+    color;
+
+
+  currentColorHex.textContent =
+    color.toUpperCase();
+
+
+  updateWheelCursor(
+    color
+  );
+
+}
+
+
+/* ==================================================
+   POSITION CURSEUR CERCLE
+   ================================================== */
+
+function updateWheelCursor(color) {
+
+  const rgb =
+    hexToRgb(
+      color
+    );
+
+
+  const hsv =
+    rgbToHsv(
+      rgb.r,
+      rgb.g,
+      rgb.b
+    );
+
+
+  const rect =
+    colorWheel.getBoundingClientRect();
+
+
+  const radius =
+    rect.width / 2;
+
+
+  const angle =
+    hsv.h *
+    Math.PI /
+    180;
+
+
+  const distance =
+    radius *
+    (hsv.s / 100) *
+    .82;
+
+
+  const center =
+    radius;
+
+
+  const x =
+    center +
+    Math.cos(
+      angle
+    ) *
+    distance;
+
+
+  const y =
+    center +
+    Math.sin(
+      angle
+    ) *
+    distance;
+
+
+  wheelCursor.style.left =
+    x + "px";
+
+  wheelCursor.style.top =
+    y + "px";
+
+  wheelCursor.style.background =
+    color;
+
+}
+
+
+/* ==================================================
+   CLIC / TOUCH CERCLE CHROMATIQUE
+   ================================================== */
+
+function selectFromWheel(event) {
+
+  const rect =
+    colorWheel.getBoundingClientRect();
+
+
+  let x =
+    event.clientX -
+    rect.left;
+
+  let y =
+    event.clientY -
+    rect.top;
+
+
+  const centerX =
+    rect.width / 2;
+
+  const centerY =
+    rect.height / 2;
+
+
+  const dx =
+    x - centerX;
+
+  const dy =
+    y - centerY;
+
+
+  const distance =
+    Math.sqrt(
+      dx*dx +
+      dy*dy
+    );
+
+
+  const radius =
+    rect.width / 2;
+
+
   /*
-   * =========================================
-   * ZOOM
-   * =========================================
+   * Si on clique dans le cercle.
    */
 
-  function updateZoom() {
+  const limitedDistance =
+    Math.min(
+      distance,
+      radius * .82
+    );
 
 
-    const cellSize =
-      Math.round(
-        BASE_CELL_SIZE *
-        zoomLevel
+  const angle =
+    Math.atan2(
+      dy,
+      dx
+    );
+
+
+  let hue =
+    angle *
+    180 /
+    Math.PI;
+
+
+  if (hue < 0) {
+    hue += 360;
+  }
+
+
+  /*
+   * Saturation selon la distance
+   */
+
+  const saturation =
+    Math.min(
+      100,
+      limitedDistance /
+      (radius * .82) *
+      100
+    );
+
+
+  /*
+   * On conserve la luminosité
+   * de la couleur actuelle.
+   */
+
+  const oldRgb =
+    hexToRgb(
+      editingColor
+    );
+
+
+  const oldHsv =
+    rgbToHsv(
+      oldRgb.r,
+      oldRgb.g,
+      oldRgb.b
+    );
+
+
+  const rgb =
+    hsvToRgb(
+      hue,
+      saturation,
+      oldHsv.v
+    );
+
+
+  const color =
+    rgbToHex(
+      rgb.r,
+      rgb.g,
+      rgb.b
+    );
+
+
+  setEditingColor(
+    color
+  );
+
+}
+
+
+colorWheel.addEventListener(
+  "pointerdown",
+  function(event) {
+
+    colorWheel.setPointerCapture(
+      event.pointerId
+    );
+
+    selectFromWheel(
+      event
+    );
+
+  }
+);
+
+
+colorWheel.addEventListener(
+  "pointermove",
+  function(event) {
+
+    if (
+      event.buttons
+    ) {
+
+      selectFromWheel(
+        event
       );
+
+    }
+
+  }
+);
+
+
+/* ==================================================
+   APPLIQUER NOUVELLE COULEUR
+   ================================================== */
+
+applyColor.addEventListener(
+  "click",
+  function() {
+
+    if (
+      editingPaletteIndex === null
+    ) {
+      return;
+    }
+
+
+    const oldColor =
+      currentPalette[
+        editingPaletteIndex
+      ];
+
+
+    const newColor =
+      editingColor;
 
 
     /*
-     * On redimensionne directement
-     * chaque maille.
+     * Modifier la palette.
+     */
+
+    currentPalette[
+      editingPaletteIndex
+    ] =
+      newColor;
+
+
+    /*
+     * Toutes les cases qui
+     * utilisaient cette couleur
+     * changent automatiquement.
      */
 
     const cells =
@@ -1363,130 +2015,468 @@
     cells.forEach(
       function(cell) {
 
-        cell.style.width =
-          cellSize + "px";
+        if (
+          Number(
+            cell.dataset.colorIndex
+          )
+          ===
+          editingPaletteIndex
+        ) {
 
-        cell.style.height =
-          cellSize + "px";
+          cell.style.background =
+            newColor;
+
+        }
 
       }
     );
 
 
-    if (
-      currentGrid &&
-      currentGrid.length > 0
-    ) {
-
-      pattern.style.gridTemplateColumns =
-        `repeat(${currentGrid[0].length}, ${cellSize}px)`;
-
-    }
+    /*
+     * Si une cellule était
+     * directement colorée avec
+     * cette palette, elle reste
+     * liée à cette couleur.
+     */
 
 
-    const percentage =
-      Math.round(
-        zoomLevel * 100
-      );
+    createPalette();
 
 
-    zoomLabel.textContent =
-      percentage + " %";
+    colorEditor.style.display =
+      "none";
 
 
-    zoomReset.textContent =
-      percentage + " %";
+    status.textContent =
+      "🎨 Couleur modifiée : "
+      +
+      oldColor
+      +
+      " → "
+      +
+      newColor;
+
+  }
+);
+
+
+/* ==================================================
+   ANNULER
+   ================================================== */
+
+cancelColor.addEventListener(
+  "click",
+  function() {
+
+    colorEditor.style.display =
+      "none";
+
+    editingPaletteIndex =
+      null;
+
+  }
+);
+
+
+/* ==================================================
+   CREATION GRILLE
+   ================================================== */
+
+function createGrid() {
+
+  pattern.innerHTML =
+    "";
+
+
+  if (
+    !Array.isArray(
+      currentGrid
+    ) ||
+    currentGrid.length === 0
+  ) {
+
+    throw new Error(
+      "La grille est vide."
+    );
 
   }
 
 
-  /*
-   * =========================================
-   * BOUTON ZOOM +
-   * =========================================
-   */
-
-  zoomIn.addEventListener(
-    "click",
-    function() {
+  const columns =
+    currentGrid[0].length;
 
 
-      if (
-        zoomLevel >= MAX_ZOOM
-      ) {
+  pattern.style.gridTemplateColumns =
+    `repeat(${columns}, ${BASE_CELL_SIZE}px)`;
 
-        return;
+
+  currentGrid.forEach(
+    function(row) {
+
+      row.forEach(
+        function(colorIndex) {
+
+          const cell =
+            document.createElement(
+              "div"
+            );
+
+
+          cell.className =
+            "cell";
+
+
+          cell.dataset.colorIndex =
+            colorIndex;
+
+
+          cell.style.width =
+            BASE_CELL_SIZE +
+            "px";
+
+
+          cell.style.height =
+            BASE_CELL_SIZE +
+            "px";
+
+
+          cell.style.background =
+            currentPalette[
+              colorIndex
+            ]
+            ||
+            "#ffffff";
+
+
+          /*
+           * Cliquer sur une case
+           * applique la couleur
+           * actuellement sélectionnée.
+           */
+
+          cell.addEventListener(
+            "click",
+            function() {
+
+              if (
+                selectedPaletteIndex === null
+              ) {
+
+                return;
+
+              }
+
+
+              cell.dataset.colorIndex =
+                selectedPaletteIndex;
+
+
+              cell.style.background =
+                currentPalette[
+                  selectedPaletteIndex
+                ];
+
+            }
+          );
+
+
+          /*
+           * Appui long / clic droit
+           * inutile : on reste simple
+           * pour smartphone.
+           */
+
+
+          pattern.appendChild(
+            cell
+          );
+
+        }
+      );
+
+    }
+  );
+
+
+  updateZoom();
+
+}
+
+
+/* ==================================================
+   SELECTION PALETTE POUR MAILLES
+   ================================================== */
+
+palette.addEventListener(
+  "click",
+  function(event) {
+
+    const item =
+      event.target.closest(
+        ".paletteItem"
+      );
+
+
+    if (!item) {
+      return;
+    }
+
+  }
+);
+
+
+/*
+ * On ajoute aussi un clic long
+ * logique via la classe selected.
+ */
+
+function selectPaletteColor(index) {
+
+  selectedPaletteIndex =
+    index;
+
+
+  document
+    .querySelectorAll(
+      ".paletteItem"
+    )
+    .forEach(
+      function(item, i) {
+
+        item.classList.toggle(
+          "selected",
+          i === index
+        );
 
       }
+    );
+
+}
 
 
-      zoomLevel =
+/*
+ * Remplacement du comportement :
+ * premier clic = édition.
+ *
+ * Pour sélectionner une couleur
+ * pour les mailles, on utilise
+ * un second geste sur la couleur :
+ * double clic.
+ */
+
+palette.addEventListener(
+  "dblclick",
+  function(event) {
+
+    const item =
+      event.target.closest(
+        ".paletteItem"
+      );
+
+
+    if (!item) {
+      return;
+    }
+
+
+    const items =
+      Array.from(
+        palette.children
+      );
+
+
+    const index =
+      items.indexOf(
+        item
+      );
+
+
+    if (index >= 0) {
+
+      selectPaletteColor(
+        index
+      );
+
+    }
+
+  }
+);
+
+
+/* ==================================================
+   ZOOM
+   ================================================== */
+
+function updateZoom() {
+
+  if (
+    !currentGrid ||
+    !currentGrid.length
+  ) {
+    return;
+  }
+
+
+  const cellSize =
+    Math.max(
+      2,
+      Math.round(
+        BASE_CELL_SIZE *
+        zoomLevel
+      )
+    );
+
+
+  const cells =
+    pattern.querySelectorAll(
+      ".cell"
+    );
+
+
+  cells.forEach(
+    function(cell) {
+
+      cell.style.width =
+        cellSize + "px";
+
+      cell.style.height =
+        cellSize + "px";
+
+    }
+  );
+
+
+  pattern.style.gridTemplateColumns =
+    `repeat(${currentGrid[0].length}, ${cellSize}px)`;
+
+
+  const percent =
+    Math.round(
+      zoomLevel * 100
+    );
+
+
+  zoomLabel.textContent =
+    percent + " %";
+
+
+  zoomReset.textContent =
+    percent + " %";
+
+}
+
+
+/* ==================================================
+   ZOOM +
+   ================================================== */
+
+zoomIn.addEventListener(
+  "click",
+  function() {
+
+    zoomLevel =
+      Math.min(
+        MAX_ZOOM,
+        zoomLevel +
+        ZOOM_STEP
+      );
+
+    updateZoom();
+
+  }
+);
+
+
+/* ==================================================
+   ZOOM -
+   ================================================== */
+
+zoomOut.addEventListener(
+  "click",
+  function() {
+
+    zoomLevel =
+      Math.max(
+        MIN_ZOOM,
+        zoomLevel -
+        ZOOM_STEP
+      );
+
+    updateZoom();
+
+  }
+);
+
+
+/* ==================================================
+   RESET 100 %
+   ================================================== */
+
+zoomReset.addEventListener(
+  "click",
+  function() {
+
+    zoomLevel =
+      1;
+
+    updateZoom();
+
+  }
+);
+
+
+/* ==================================================
+   ADAPTER A L'ECRAN
+   ================================================== */
+
+fitScreen.addEventListener(
+  "click",
+  function() {
+
+    if (
+      !currentGrid ||
+      !currentGrid.length
+    ) {
+      return;
+    }
+
+
+    const columns =
+      currentGrid[0].length;
+
+
+    const availableWidth =
+      patternContainer.clientWidth
+      - 24;
+
+
+    const desiredCellSize =
+      availableWidth /
+      columns;
+
+
+    zoomLevel =
+      desiredCellSize /
+      BASE_CELL_SIZE;
+
+
+    zoomLevel =
+      Math.max(
+        MIN_ZOOM,
         Math.min(
           MAX_ZOOM,
-          zoomLevel + ZOOM_STEP
-        );
+          zoomLevel
+        )
+      );
 
 
-      updateZoom();
+    updateZoom();
 
-    }
-  );
-
-
-  /*
-   * =========================================
-   * BOUTON ZOOM -
-   * =========================================
-   */
-
-  zoomOut.addEventListener(
-    "click",
-    function() {
-
-
-      if (
-        zoomLevel <= MIN_ZOOM
-      ) {
-
-        return;
-
-      }
-
-
-      zoomLevel =
-        Math.max(
-          MIN_ZOOM,
-          zoomLevel - ZOOM_STEP
-        );
-
-
-      updateZoom();
-
-    }
-  );
-
-
-  /*
-   * =========================================
-   * RESET ZOOM
-   * =========================================
-   */
-
-  zoomReset.addEventListener(
-    "click",
-    function() {
-
-      zoomLevel = 1;
-
-      updateZoom();
-
-    }
-  );
+  }
+);
 
 
 </script>
 
-
 </body>
-
-</html>
+  </html>
