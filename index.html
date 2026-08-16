@@ -175,9 +175,6 @@
 
 <main>
 
-
-  <!-- IMAGE -->
-
   <div class="card">
 
     <label for="image">
@@ -197,8 +194,6 @@
 
   </div>
 
-
-  <!-- DIMENSIONS -->
 
   <div class="card">
 
@@ -268,8 +263,6 @@
   </div>
 
 
-  <!-- COULEURS -->
-
   <div class="card">
 
     <label for="colors">
@@ -295,8 +288,6 @@
   </div>
 
 
-  <!-- GENERATION -->
-
   <div class="card">
 
     <button id="generate">
@@ -309,8 +300,6 @@
 
   </div>
 
-
-  <!-- RESULTAT -->
 
   <div class="card">
 
@@ -329,8 +318,6 @@
 
   </div>
 
-
-  <!-- PALETTE -->
 
   <div
     class="card"
@@ -358,12 +345,6 @@
 
 
 <script>
-
-  /*
-   * ============================
-   * ELEMENTS
-   * ============================
-   */
 
   const imageInput =
     document.getElementById("image");
@@ -398,28 +379,192 @@
 
 
   /*
-   * ============================
-   * CHARGEMENT IMAGE
-   * ============================
+   * =========================================
+   * COMPRESSER L'IMAGE AVANT L'ENVOI
+   * =========================================
+   */
+
+  function compressImage(file) {
+
+    return new Promise(
+      function(resolve, reject) {
+
+        const reader =
+          new FileReader();
+
+
+        reader.onload =
+          function(event) {
+
+            const img =
+              new Image();
+
+
+            img.onload =
+              function() {
+
+                const MAX_SIZE = 1600;
+
+                let width =
+                  img.width;
+
+                let height =
+                  img.height;
+
+
+                /*
+                 * On conserve les proportions.
+                 */
+
+                if (
+                  width > MAX_SIZE ||
+                  height > MAX_SIZE
+                ) {
+
+                  if (width > height) {
+
+                    height =
+                      Math.round(
+                        height *
+                        MAX_SIZE /
+                        width
+                      );
+
+                    width =
+                      MAX_SIZE;
+
+                  } else {
+
+                    width =
+                      Math.round(
+                        width *
+                        MAX_SIZE /
+                        height
+                      );
+
+                    height =
+                      MAX_SIZE;
+
+                  }
+
+                }
+
+
+                const canvas =
+                  document.createElement(
+                    "canvas"
+                  );
+
+
+                canvas.width =
+                  width;
+
+                canvas.height =
+                  height;
+
+
+                const ctx =
+                  canvas.getContext(
+                    "2d"
+                  );
+
+
+                ctx.drawImage(
+                  img,
+                  0,
+                  0,
+                  width,
+                  height
+                );
+
+
+                /*
+                 * JPEG qualité 82%.
+                 *
+                 * Cela réduit énormément
+                 * le poids des photos.
+                 */
+
+                const compressed =
+                  canvas.toDataURL(
+                    "image/jpeg",
+                    0.82
+                  );
+
+
+                resolve(
+                  compressed
+                );
+
+              };
+
+
+            img.onerror =
+              function() {
+
+                reject(
+                  new Error(
+                    "Impossible de lire l'image."
+                  )
+                );
+
+              };
+
+
+            img.src =
+              event.target.result;
+
+          };
+
+
+        reader.onerror =
+          function() {
+
+            reject(
+              new Error(
+                "Impossible de charger l'image."
+              )
+            );
+
+          };
+
+
+        reader.readAsDataURL(file);
+
+      }
+    );
+
+  }
+
+
+  /*
+   * =========================================
+   * PREVISUALISATION
+   * =========================================
    */
 
   imageInput.addEventListener(
     "change",
-    function() {
+    async function() {
 
-      const file = this.files[0];
+      const file =
+        this.files[0];
+
 
       if (!file) {
         return;
       }
 
-      const reader =
-        new FileReader();
 
-      reader.onload = function(event) {
+      try {
+
+        status.textContent =
+          "Préparation de l'image…";
+
 
         imageData =
-          event.target.result;
+          await compressImage(file);
+
 
         preview.src =
           imageData;
@@ -427,21 +572,43 @@
         preview.style.display =
           "block";
 
+
+        /*
+         * Affichage approximatif
+         * du poids envoyé.
+         */
+
+        const sizeKB =
+          Math.round(
+            imageData.length * 0.75 / 1024
+          );
+
+
         status.textContent =
-          "Image chargée. Elle est prête à être analysée.";
+          "Image prête. Taille préparée : "
+          + sizeKB
+          + " Ko.";
 
-      };
+      }
 
-      reader.readAsDataURL(file);
+      catch (error) {
+
+        imageData = null;
+
+        status.textContent =
+          "❌ "
+          + error.message;
+
+      }
 
     }
   );
 
 
   /*
-   * ============================
+   * =========================================
    * GENERATION
-   * ============================
+   * =========================================
    */
 
   generateButton.addEventListener(
@@ -460,47 +627,49 @@
 
       const width =
         Number(
-          document.getElementById("width").value
+          document.getElementById(
+            "width"
+          ).value
         );
+
 
       const height =
         Number(
-          document.getElementById("height").value
+          document.getElementById(
+            "height"
+          ).value
         );
+
 
       const colors =
         Number(
-          document.getElementById("colors").value
+          document.getElementById(
+            "colors"
+          ).value
         );
 
 
       generateButton.disabled =
         true;
 
+
       generateButton.textContent =
-        "🧠 L'IA analyse ton image...";
+        "🧠 L'IA analyse ton image…";
 
 
       status.textContent =
-        "Analyse de l'image en cours…";
+        "Envoi de l'image à l'IA…";
 
 
       patternContainer.style.display =
         "none";
+
 
       paletteCard.style.display =
         "none";
 
 
       try {
-
-        /*
-         * Envoi de l'image à notre serveur Vercel.
-         *
-         * IMPORTANT :
-         * On n'envoie JAMAIS la clé OpenAI
-         * depuis le téléphone.
-         */
 
         const response =
           await fetch(
@@ -535,48 +704,105 @@
           );
 
 
-        const result =
-          await response.json();
+        /*
+         * On lit d'abord la réponse
+         * comme du texte.
+         *
+         * Cela évite le fameux :
+         * Unexpected token 'R'
+         */
+
+        const responseText =
+          await response.text();
+
+
+        let result;
+
+
+        try {
+
+          result =
+            JSON.parse(
+              responseText
+            );
+
+        }
+
+        catch (jsonError) {
+
+          console.error(
+            "Réponse serveur :",
+            responseText
+          );
+
+
+          if (
+            response.status === 413
+          ) {
+
+            throw new Error(
+              "Image encore trop lourde pour le serveur."
+            );
+
+          }
+
+
+          throw new Error(
+            "Le serveur n'a pas renvoyé une réponse valide. Code : "
+            + response.status
+          );
+
+        }
 
 
         if (!response.ok) {
 
           throw new Error(
             result.error ||
-            "Erreur lors de l'analyse."
+            "Erreur du serveur."
           );
 
         }
 
 
         /*
-         * ============================
-         * AFFICHAGE DE LA PALETTE
-         * ============================
+         * =================================
+         * PALETTE
+         * =================================
          */
 
         currentPalette =
           result.palette || [];
 
-        selectedColor = null;
 
-        palette.innerHTML = "";
+        selectedColor =
+          null;
+
+
+        palette.innerHTML =
+          "";
 
 
         currentPalette.forEach(
           function(color, index) {
 
             const colorButton =
-              document.createElement("button");
+              document.createElement(
+                "button"
+              );
+
 
             colorButton.className =
               "paletteColor";
 
+
             colorButton.style.background =
               color;
 
+
             colorButton.title =
               color;
+
 
             colorButton.addEventListener(
               "click",
@@ -584,6 +810,7 @@
 
                 selectedColor =
                   index;
+
 
                 document
                   .querySelectorAll(
@@ -593,13 +820,18 @@
                     function(button) {
 
                       button.classList
-                        .remove("selected");
+                        .remove(
+                          "selected"
+                        );
 
                     }
                   );
 
+
                 colorButton.classList
-                  .add("selected");
+                  .add(
+                    "selected"
+                  );
 
               }
             );
@@ -613,7 +845,9 @@
         );
 
 
-        if (currentPalette.length > 0) {
+        if (
+          currentPalette.length > 0
+        ) {
 
           paletteCard.style.display =
             "block";
@@ -622,9 +856,9 @@
 
 
         /*
-         * ============================
-         * CREATION DE LA GRILLE
-         * ============================
+         * =================================
+         * GRILLE
+         * =================================
          */
 
         createGrid(
@@ -651,6 +885,7 @@
 
         console.error(error);
 
+
         status.textContent =
           "❌ "
           + error.message;
@@ -663,6 +898,7 @@
         generateButton.disabled =
           false;
 
+
         generateButton.textContent =
           "🧠 Analyser et créer mon patron";
 
@@ -673,9 +909,9 @@
 
 
   /*
-   * ============================
+   * =========================================
    * CREATION DE LA GRILLE
-   * ============================
+   * =========================================
    */
 
   function createGrid(
@@ -683,20 +919,37 @@
     colors
   ) {
 
-    pattern.innerHTML = "";
+    pattern.innerHTML =
+      "";
+
+
+    if (
+      !Array.isArray(grid) ||
+      grid.length === 0
+    ) {
+
+      throw new Error(
+        "L'IA n'a pas renvoyé de grille."
+      );
+
+    }
+
 
     pattern.style.gridTemplateColumns =
       `repeat(${grid[0].length}, 22px)`;
 
 
     grid.forEach(
-      function(row, rowIndex) {
+      function(row) {
 
         row.forEach(
-          function(colorIndex, columnIndex) {
+          function(colorIndex) {
 
             const cell =
-              document.createElement("div");
+              document.createElement(
+                "div"
+              );
+
 
             cell.className =
               "cell";
@@ -710,13 +963,6 @@
               color || "#ffffff";
 
 
-            /*
-             * Pour l'instant :
-             * cliquer sur une maille avec
-             * une couleur sélectionnée
-             * change sa couleur.
-             */
-
             cell.addEventListener(
               "click",
               function() {
@@ -724,7 +970,9 @@
                 if (
                   selectedColor === null
                 ) {
+
                   return;
+
                 }
 
 
