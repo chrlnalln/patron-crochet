@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Patron Crochet AI</title>
 
@@ -84,6 +90,7 @@
 
     button:disabled {
       opacity: 0.5;
+      cursor: default;
     }
 
     .dimensions {
@@ -109,39 +116,102 @@
       line-height: 1.5;
     }
 
+    /*
+     * =========================================
+     * CONTENEUR DU PATRON
+     * =========================================
+     */
+
     #patternContainer {
       overflow: auto;
       max-width: 100%;
-      padding: 10px;
+      padding: 14px;
       background: #eee;
       border-radius: 10px;
+      -webkit-overflow-scrolling: touch;
     }
+
+    /*
+     * =========================================
+     * CONTROLES DU ZOOM
+     * =========================================
+     */
+
+    .zoomControls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .zoomControls button {
+      width: 52px;
+      min-height: 44px;
+      padding: 5px;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    #zoomReset {
+      width: 90px;
+      font-size: 14px;
+    }
+
+    #zoomLabel {
+      min-width: 58px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    /*
+     * =========================================
+     * GRILLE
+     * =========================================
+     */
 
     #pattern {
       display: grid;
       width: max-content;
       margin: auto;
-      border: 2px solid #222;
+      border-top: 1px solid rgba(0,0,0,0.25);
+      border-left: 1px solid rgba(0,0,0,0.25);
+      transform-origin: top left;
     }
 
     .cell {
-      width: 22px;
-      height: 22px;
       border-right: 1px solid rgba(0,0,0,0.25);
       border-bottom: 1px solid rgba(0,0,0,0.25);
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
     }
+
+    .cell:active {
+      opacity: 0.7;
+    }
+
+    /*
+     * =========================================
+     * PALETTE
+     * =========================================
+     */
 
     .palette {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 10px;
       margin-top: 12px;
     }
 
     .paletteColor {
-      width: 42px;
-      height: 42px;
-      border-radius: 8px;
+      width: 46px;
+      height: 46px;
+      min-height: 46px;
+      padding: 0;
+      border-radius: 9px;
       border: 3px solid white;
       box-shadow: 0 0 0 1px #aaa;
       cursor: pointer;
@@ -149,6 +219,14 @@
 
     .paletteColor.selected {
       box-shadow: 0 0 0 3px #222;
+      transform: scale(1.08);
+    }
+
+    .paletteName {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #555;
+      text-align: center;
     }
 
     .info {
@@ -157,10 +235,57 @@
       line-height: 1.5;
     }
 
+    .editHint {
+      background: #f5f2ed;
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 12px;
+      font-size: 13px;
+      text-align: center;
+      color: #555;
+    }
+
+    /*
+     * =========================================
+     * MOBILE
+     * =========================================
+     */
+
+    @media (max-width: 600px) {
+
+      main {
+        padding: 10px;
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      .dimensions {
+        gap: 8px;
+      }
+
+      .zoomControls {
+        gap: 5px;
+      }
+
+      .zoomControls button {
+        width: 48px;
+      }
+
+      #zoomReset {
+        width: 78px;
+      }
+
+    }
+
   </style>
+
 </head>
 
+
 <body>
+
 
 <header>
 
@@ -174,6 +299,11 @@
 
 
 <main>
+
+
+  <!-- =========================================
+       IMAGE
+       ========================================= -->
 
   <div class="card">
 
@@ -195,6 +325,10 @@
   </div>
 
 
+  <!-- =========================================
+       DIMENSIONS
+       ========================================= -->
+
   <div class="card">
 
     <label>
@@ -212,11 +346,11 @@
         <select id="width">
 
           <option>10</option>
-          <option selected>20</option>
+          <option>20</option>
           <option>30</option>
           <option>40</option>
           <option>50</option>
-          <option>60</option>
+          <option selected>60</option>
           <option>80</option>
           <option>100</option>
           <option>150</option>
@@ -240,11 +374,11 @@
         <select id="height">
 
           <option>10</option>
-          <option selected>20</option>
+          <option>20</option>
           <option>30</option>
           <option>40</option>
           <option>50</option>
-          <option>60</option>
+          <option selected>60</option>
           <option>80</option>
           <option>100</option>
           <option>150</option>
@@ -262,6 +396,10 @@
 
   </div>
 
+
+  <!-- =========================================
+       NOMBRE DE COULEURS
+       ========================================= -->
 
   <div class="card">
 
@@ -288,6 +426,10 @@
   </div>
 
 
+  <!-- =========================================
+       GENERATION
+       ========================================= -->
+
   <div class="card">
 
     <button id="generate">
@@ -301,23 +443,81 @@
   </div>
 
 
+  <!-- =========================================
+       PATRON
+       ========================================= -->
+
   <div class="card">
 
     <h2>
       Ton patron
     </h2>
 
+
     <div
-      id="patternContainer"
+      id="patternArea"
       style="display:none;"
     >
 
-      <div id="pattern"></div>
+
+      <!-- CONTROLES ZOOM -->
+
+      <div class="zoomControls">
+
+        <button
+          id="zoomOut"
+          type="button"
+          aria-label="Dézoomer"
+        >
+          −
+        </button>
+
+
+        <button
+          id="zoomReset"
+          type="button"
+        >
+          100 %
+        </button>
+
+
+        <button
+          id="zoomIn"
+          type="button"
+          aria-label="Zoomer"
+        >
+          +
+        </button>
+
+
+        <span id="zoomLabel">
+          100 %
+        </span>
+
+      </div>
+
+
+      <div class="editHint">
+        🎨 Sélectionne une couleur dans la palette,
+        puis touche une case du patron pour la modifier.
+      </div>
+
+
+      <div id="patternContainer">
+
+        <div id="pattern"></div>
+
+      </div>
+
 
     </div>
 
   </div>
 
+
+  <!-- =========================================
+       PALETTE
+       ========================================= -->
 
   <div
     class="card"
@@ -326,17 +526,25 @@
   >
 
     <h2>
-      Palette détectée
+      🎨 Palette du patron
     </h2>
 
     <p class="info">
-      Clique sur une couleur pour la sélectionner.
+      Sélectionne une couleur puis clique sur les
+      mailles que tu veux modifier.
     </p>
 
     <div
       id="palette"
       class="palette"
     ></div>
+
+    <div
+      id="paletteName"
+      class="paletteName"
+    >
+      Aucune couleur sélectionnée.
+    </div>
 
   </div>
 
@@ -345,6 +553,13 @@
 
 
 <script>
+
+
+  /*
+   * =========================================
+   * ELEMENTS
+   * =========================================
+   */
 
   const imageInput =
     document.getElementById("image");
@@ -358,6 +573,9 @@
   const status =
     document.getElementById("status");
 
+  const patternArea =
+    document.getElementById("patternArea");
+
   const patternContainer =
     document.getElementById("patternContainer");
 
@@ -370,6 +588,27 @@
   const palette =
     document.getElementById("palette");
 
+  const paletteName =
+    document.getElementById("paletteName");
+
+  const zoomIn =
+    document.getElementById("zoomIn");
+
+  const zoomOut =
+    document.getElementById("zoomOut");
+
+  const zoomReset =
+    document.getElementById("zoomReset");
+
+  const zoomLabel =
+    document.getElementById("zoomLabel");
+
+
+  /*
+   * =========================================
+   * VARIABLES
+   * =========================================
+   */
 
   let imageData = null;
 
@@ -377,10 +616,23 @@
 
   let selectedColor = null;
 
+  let currentGrid = null;
+
+  let zoomLevel = 1;
+
+
+  const MIN_ZOOM = 0.5;
+
+  const MAX_ZOOM = 3;
+
+  const ZOOM_STEP = 0.25;
+
+  const BASE_CELL_SIZE = 22;
+
 
   /*
    * =========================================
-   * COMPRESSER L'IMAGE AVANT L'ENVOI
+   * COMPRESSION IMAGE
    * =========================================
    */
 
@@ -412,10 +664,6 @@
                   img.height;
 
 
-                /*
-                 * On conserve les proportions.
-                 */
-
                 if (
                   width > MAX_SIZE ||
                   height > MAX_SIZE
@@ -433,7 +681,9 @@
                     width =
                       MAX_SIZE;
 
-                  } else {
+                  }
+
+                  else {
 
                     width =
                       Math.round(
@@ -477,13 +727,6 @@
                   height
                 );
 
-
-                /*
-                 * JPEG qualité 82%.
-                 *
-                 * Cela réduit énormément
-                 * le poids des photos.
-                 */
 
                 const compressed =
                   canvas.toDataURL(
@@ -539,7 +782,7 @@
 
   /*
    * =========================================
-   * PREVISUALISATION
+   * PREVISUALISATION IMAGE
    * =========================================
    */
 
@@ -569,27 +812,28 @@
         preview.src =
           imageData;
 
+
         preview.style.display =
           "block";
 
 
-        /*
-         * Affichage approximatif
-         * du poids envoyé.
-         */
-
         const sizeKB =
           Math.round(
-            imageData.length * 0.75 / 1024
+            imageData.length *
+            0.75 /
+            1024
           );
 
 
         status.textContent =
           "Image prête. Taille préparée : "
-          + sizeKB
-          + " Ko.";
+          +
+          sizeKB
+          +
+          " Ko.";
 
       }
+
 
       catch (error) {
 
@@ -597,7 +841,8 @@
 
         status.textContent =
           "❌ "
-          + error.message;
+          +
+          error.message;
 
       }
 
@@ -614,6 +859,7 @@
   generateButton.addEventListener(
     "click",
     async function() {
+
 
       if (!imageData) {
 
@@ -661,7 +907,7 @@
         "Envoi de l'image à l'IA…";
 
 
-      patternContainer.style.display =
+      patternArea.style.display =
         "none";
 
 
@@ -670,6 +916,11 @@
 
 
       try {
+
+
+        /*
+         * ENVOI A L'API
+         */
 
         const response =
           await fetch(
@@ -705,11 +956,7 @@
 
 
         /*
-         * On lit d'abord la réponse
-         * comme du texte.
-         *
-         * Cela évite le fameux :
-         * Unexpected token 'R'
+         * LECTURE TEXTE
          */
 
         const responseText =
@@ -727,6 +974,7 @@
             );
 
         }
+
 
         catch (jsonError) {
 
@@ -749,7 +997,8 @@
 
           throw new Error(
             "Le serveur n'a pas renvoyé une réponse valide. Code : "
-            + response.status
+            +
+            response.status
           );
 
         }
@@ -783,13 +1032,22 @@
           "";
 
 
+        paletteName.textContent =
+          "Aucune couleur sélectionnée.";
+
+
         currentPalette.forEach(
           function(color, index) {
+
 
             const colorButton =
               document.createElement(
                 "button"
               );
+
+
+            colorButton.type =
+              "button";
 
 
             colorButton.className =
@@ -801,12 +1059,26 @@
 
 
             colorButton.title =
+              "Couleur "
+              +
+              (index + 1)
+              +
+              " : "
+              +
               color;
+
+
+            colorButton.setAttribute(
+              "aria-label",
+              "Sélectionner la couleur " +
+              (index + 1)
+            );
 
 
             colorButton.addEventListener(
               "click",
               function() {
+
 
                 selectedColor =
                   index;
@@ -832,6 +1104,12 @@
                   .add(
                     "selected"
                   );
+
+
+                paletteName.textContent =
+                  "Couleur sélectionnée : "
+                  +
+                  color;
 
               }
             );
@@ -861,22 +1139,38 @@
          * =================================
          */
 
+        currentGrid =
+          result.grid;
+
+
+        zoomLevel =
+          1;
+
+
+        updateZoom();
+
+
         createGrid(
-          result.grid,
+          currentGrid,
           currentPalette
         );
 
 
-        patternContainer.style.display =
+        patternArea.style.display =
           "block";
 
 
         status.textContent =
           "✅ Patron généré : "
-          + width
-          + " × "
-          + height
-          + " mailles.";
+          +
+          width
+          +
+          " × "
+          +
+          height
+          +
+          " mailles.";
+
 
       }
 
@@ -888,7 +1182,8 @@
 
         status.textContent =
           "❌ "
-          + error.message;
+          +
+          error.message;
 
       }
 
@@ -919,6 +1214,7 @@
     colors
   ) {
 
+
     pattern.innerHTML =
       "";
 
@@ -935,15 +1231,21 @@
     }
 
 
+    const columns =
+      grid[0].length;
+
+
     pattern.style.gridTemplateColumns =
-      `repeat(${grid[0].length}, 22px)`;
+      `repeat(${columns}, ${BASE_CELL_SIZE}px)`;
 
 
     grid.forEach(
       function(row) {
 
+
         row.forEach(
           function(colorIndex) {
+
 
             const cell =
               document.createElement(
@@ -955,6 +1257,10 @@
               "cell";
 
 
+            cell.dataset.colorIndex =
+              colorIndex;
+
+
             const color =
               colors[colorIndex];
 
@@ -963,9 +1269,24 @@
               color || "#ffffff";
 
 
+            cell.style.width =
+              BASE_CELL_SIZE + "px";
+
+
+            cell.style.height =
+              BASE_CELL_SIZE + "px";
+
+
+            /*
+             * =================================
+             * CHANGEMENT DE COULEUR
+             * =================================
+             */
+
             cell.addEventListener(
               "click",
               function() {
+
 
                 if (
                   selectedColor === null
@@ -976,8 +1297,21 @@
                 }
 
 
-                cell.style.background =
+                const newColor =
                   colors[selectedColor];
+
+
+                if (!newColor) {
+                  return;
+                }
+
+
+                cell.style.background =
+                  newColor;
+
+
+                cell.dataset.colorIndex =
+                  selectedColor;
 
               }
             );
@@ -993,9 +1327,166 @@
       }
     );
 
+
+    updateZoom();
+
   }
+
+
+  /*
+   * =========================================
+   * ZOOM
+   * =========================================
+   */
+
+  function updateZoom() {
+
+
+    const cellSize =
+      Math.round(
+        BASE_CELL_SIZE *
+        zoomLevel
+      );
+
+
+    /*
+     * On redimensionne directement
+     * chaque maille.
+     */
+
+    const cells =
+      pattern.querySelectorAll(
+        ".cell"
+      );
+
+
+    cells.forEach(
+      function(cell) {
+
+        cell.style.width =
+          cellSize + "px";
+
+        cell.style.height =
+          cellSize + "px";
+
+      }
+    );
+
+
+    if (
+      currentGrid &&
+      currentGrid.length > 0
+    ) {
+
+      pattern.style.gridTemplateColumns =
+        `repeat(${currentGrid[0].length}, ${cellSize}px)`;
+
+    }
+
+
+    const percentage =
+      Math.round(
+        zoomLevel * 100
+      );
+
+
+    zoomLabel.textContent =
+      percentage + " %";
+
+
+    zoomReset.textContent =
+      percentage + " %";
+
+  }
+
+
+  /*
+   * =========================================
+   * BOUTON ZOOM +
+   * =========================================
+   */
+
+  zoomIn.addEventListener(
+    "click",
+    function() {
+
+
+      if (
+        zoomLevel >= MAX_ZOOM
+      ) {
+
+        return;
+
+      }
+
+
+      zoomLevel =
+        Math.min(
+          MAX_ZOOM,
+          zoomLevel + ZOOM_STEP
+        );
+
+
+      updateZoom();
+
+    }
+  );
+
+
+  /*
+   * =========================================
+   * BOUTON ZOOM -
+   * =========================================
+   */
+
+  zoomOut.addEventListener(
+    "click",
+    function() {
+
+
+      if (
+        zoomLevel <= MIN_ZOOM
+      ) {
+
+        return;
+
+      }
+
+
+      zoomLevel =
+        Math.max(
+          MIN_ZOOM,
+          zoomLevel - ZOOM_STEP
+        );
+
+
+      updateZoom();
+
+    }
+  );
+
+
+  /*
+   * =========================================
+   * RESET ZOOM
+   * =========================================
+   */
+
+  zoomReset.addEventListener(
+    "click",
+    function() {
+
+      zoomLevel = 1;
+
+      updateZoom();
+
+    }
+  );
+
 
 </script>
 
+
 </body>
+
 </html>
