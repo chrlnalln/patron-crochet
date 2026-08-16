@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Patron Crochet AI</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f2ed;
+      color: #222;
+    }
+
+    header {
+      background: #222;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    header p {
+      margin: 6px 0 0;
+      opacity: 0.8;
+      font-size: 14px;
+    }
+
+    main {
+      max-width: 700px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    input,
+    select,
+    button {
+      width: 100%;
+      min-height: 46px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    input,
+    select {
+      background: white;
+      margin-bottom: 14px;
+    }
+
+    button {
+      background: #222;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    #preview {
+      width: 100%;
+      max-height: 300px;
+      object-fit: contain;
+      display: none;
+      border-radius: 10px;
+      margin-top: 12px;
+    }
+
+    .dimensions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .placeholder {
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #eee;
+      border-radius: 10px;
+      color: #777;
+      text-align: center;
+    }
+
+    #status {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #666;
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      main {
+        padding: 12px;
+      }
+
+      header {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>🧶 Patron Crochet AI</h1>
+  <p>Transforme une image en grille de crochet</p>
+</header>
+
+<main>
+
+  <div class="card">
+
+    <label for="image">
+      1. Choisis ton image
+    </label>
+
+    <input
+      type="file"
+      id="image"
+      accept="image/*"
+    >
+
+    <img id="preview" alt="Aperçu de l'image">
+
+  </div>
+
+
+  <div class="card">
+
+    <label>
+      2. Dimensions du patron
+    </label>
+
+    <div class="dimensions">
+
+      <div>
+        <label for="width">Largeur</label>
+
+        <select id="width">
+          <option>10</option>
+          <option>20</option>
+          <option>30</option>
+          <option>40</option>
+          <option>50</option>
+          <option>60</option>
+          <option>80</option>
+          <option>100</option>
+          <option>150</option>
+          <option>200</option>
+          <option>300</option>
+          <option>500</option>
+          <option>1000</option>
+          <option>2000</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="height">Hauteur</label>
+
+        <select id="height">
+          <option>10</option>
+          <option selected>20</option>
+          <option>30</option>
+          <option>40</option>
+          <option>50</option>
+          <option>60</option>
+          <option>80</option>
+          <option>100</option>
+          <option>150</option>
+          <option>200</option>
+          <option>300</option>
+          <option>500</option>
+          <option>1000</option>
+          <option>2000</option>
+        </select>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <label for="colors">
+      3. Nombre de couleurs
+    </label>
+
+    <select id="colors">
+      <option>1</option>
+      <option selected>2</option>
+      <option>3</option>
+      <option>4</option>
+      <option>5</option>
+      <option>6</option>
+      <option>8</option>
+      <option>10</option>
+      <option>12</option>
+      <option>16</option>
+      <option>20</option>
+    </select>
+
+  </div>
+
+
+  <div class="card">
+
+    <button id="generate">
+      🧠 Analyser et créer mon patron
+    </button>
+
+    <div id="status">
+      Aucune image analysée pour le moment.
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <h2>Ton patron</h2>
+
+    <div class="placeholder" id="pattern">
+      La grille apparaîtra ici
+    </div>
+
+  </div>
+
+</main>
+
+
+<script>
+
+  const imageInput = document.getElementById("image");
+  const preview = document.getElementById("preview");
+  const status = document.getElementById("status");
+
+  imageInput.addEventListener("change", function() {
+
+    const file = this.files[0];
+
+    if (!file) {
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+
+    preview.src = url;
+    preview.style.display = "block";
+
+    status.textContent =
+      "Image chargée. Elle est prête à être analysée.";
+
+  });
+
+
+  document
+    .getElementById("generate")
+    .addEventListener("click", function() {
+
+      const file = imageInput.files[0];
+
+      if (!file) {
+
+        status.textContent =
+          "⚠️ Choisis d'abord une image.";
+
+        return;
+
+      }
+
+      const width =
+        document.getElementById("width").value;
+
+      const height =
+        document.getElementById("height").value;
+
+      const colors =
+        document.getElementById("colors").value;
+
+      status.textContent =
+        "🧠 L'IA analysera bientôt cette image en "
+        + width + " × " + height
+        + " avec " + colors + " couleurs.";
+
+    });
+
+</script>
+
+</body>
+</html>
