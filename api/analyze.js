@@ -1,23 +1,20 @@
 export default async function handler(req, res) {
 
-  // =========================================
-  // 1. Vérification de la méthode
-  // =========================================
+  // ============================================================
+  // 1. MÉTHODE HTTP
+  // ============================================================
 
   if (req.method !== "POST") {
-
     return res.status(405).json({
-      error: "Méthode non autorisée."
+      error: "Méthode non autorisée"
     });
-
   }
-
 
   try {
 
-    // =========================================
-    // 2. Récupération des données
-    // =========================================
+    // ============================================================
+    // 2. RÉCUPÉRATION DES DONNÉES
+    // ============================================================
 
     const {
       image,
@@ -26,799 +23,522 @@ export default async function handler(req, res) {
       colors
     } = req.body || {};
 
+    const W = Number(width);
+    const H = Number(height);
+    const C = Number(colors);
 
-    // =========================================
-    // 3. Vérifications
-    // =========================================
+    // ============================================================
+    // 3. VÉRIFICATIONS
+    // ============================================================
 
     if (!image) {
-
       return res.status(400).json({
         error: "Aucune image reçue."
       });
-
     }
 
-
-    if (!width || !height || !colors) {
-
+    if (!Number.isInteger(W) || W < 1 || W > 120) {
       return res.status(400).json({
-        error:
-          "La largeur, la hauteur et le nombre de couleurs sont obligatoires."
+        error: "Largeur invalide."
       });
-
     }
 
-
-    const patternWidth = Number(width);
-    const patternHeight = Number(height);
-    const numberOfColors = Number(colors);
-
-
-    if (
-      !Number.isInteger(patternWidth) ||
-      !Number.isInteger(patternHeight) ||
-      !Number.isInteger(numberOfColors)
-    ) {
-
+    if (!Number.isInteger(H) || H < 1 || H > 120) {
       return res.status(400).json({
-        error:
-          "Les dimensions et le nombre de couleurs doivent être des nombres entiers."
+        error: "Hauteur invalide."
       });
-
     }
 
-
-    if (
-      patternWidth < 1 ||
-      patternHeight < 1 ||
-      numberOfColors < 1 ||
-      numberOfColors > 20
-    ) {
-
+    if (!Number.isInteger(C) || C < 2 || C > 12) {
       return res.status(400).json({
-        error:
-          "Dimensions ou nombre de couleurs invalides."
+        error: "Nombre de couleurs invalide."
       });
-
     }
 
+    // ============================================================
+    // 4. CLÉ API
+    // ============================================================
 
-    // =========================================
-    // 4. Clé API
-    // =========================================
-
-    const apiKey =
-      process.env.OPENAI_API_KEY;
-
+    const apiKey = process.env.OPENAI_API_KEY;
 
     if (!apiKey) {
-
       return res.status(500).json({
-        error:
-          "La clé API OpenAI n'est pas configurée sur le serveur."
+        error: "La clé API OpenAI n'est pas configurée."
       });
-
     }
 
-
-    // =========================================
-    // 5. Prompt du cerveau IA
-    // =========================================
+    // ============================================================
+    // 5. PROMPT DE L'IA
+    // ============================================================
 
     const prompt = `
+Tu es le moteur intelligent d'une application qui transforme
+une image en patron de TAPISSERIE AU CROCHET.
 
-Tu es le moteur intelligent d'une application
-qui transforme une IMAGE en PATRON DE TAPISSERIE AU CROCHET.
-
-Ta mission n'est PAS de simplement réduire ou pixeliser
-l'image.
-
-Tu dois COMPRENDRE l'image puis REDESSINER son contenu
-important sous forme d'une grille de crochet.
-
-PARAMÈTRES DEMANDÉS :
-
-- largeur exacte : ${patternWidth} mailles
-- hauteur exacte : ${patternHeight} mailles
-- maximum ${numberOfColors} couleurs
-- une case = une maille = une couleur
+Tu dois analyser l'image visuellement et reconstruire son motif
+principal sous forme d'une grille de mailles.
 
 IMPORTANT :
 
-Le résultat doit contenir exactement :
+Il ne faut PAS faire une simple moyenne de pixels.
 
-${patternHeight} lignes
+Il faut comprendre l'image.
 
-et chaque ligne doit contenir exactement :
+Tu dois identifier notamment :
 
-${patternWidth} cases.
-
-
-=========================================
-ANALYSE VISUELLE
-=========================================
-
-Commence par analyser l'image.
-
-Identifie notamment :
-
-- les éléments principaux ;
-- les textes ;
-- les lettres ;
-- les logos ;
-- les formes ;
+- le sujet principal ;
 - les silhouettes ;
+- les formes importantes ;
 - les contours ;
-- les espaces négatifs ;
-- les proportions ;
+- les lettres ou textes éventuellement présents ;
+- les symboles ;
+- les détails visuels caractéristiques ;
+- les espaces négatifs importants ;
 - les positions relatives ;
-- les couleurs essentielles.
+- les proportions ;
+- les contrastes essentiels.
 
+Le but est que le patron final reste RECONNAISSABLE.
 
-=========================================
-REDESSIN
-=========================================
+Tu peux simplifier les petits détails, mais tu dois préserver
+les éléments visuellement importants.
 
-Ensuite, imagine comment REDESSINER ces éléments
-sur une grille de ${patternWidth} × ${patternHeight} mailles.
+PARAMÈTRES EXACTS DU PATRON :
 
-Le but principal est que le motif reste RECONNAISSABLE.
+Largeur : ${W} mailles
+Hauteur : ${H} mailles
+Nombre maximum de couleurs : ${C}
 
-Tu peux :
+RÈGLES ABSOLUES POUR LA GRILLE :
 
-- simplifier les détails ;
-- épaissir les contours ;
-- simplifier les courbes ;
-- supprimer les détails minuscules ;
-- renforcer les espaces négatifs ;
-- modifier légèrement les proportions ;
-- déplacer légèrement un élément pour qu'il reste lisible.
+- Il doit y avoir EXACTEMENT ${H} lignes.
+- Chaque ligne doit contenir EXACTEMENT ${W} cases.
+- Chaque case correspond à UNE maille.
+- Une case contient uniquement un numéro de couleur.
+- Les numéros commencent à 0.
+- Les numéros autorisés vont de 0 à ${C - 1}.
+- Il ne doit jamais y avoir de numéro supérieur ou égal à ${C}.
+- La grille doit représenter le motif principal de l'image.
+- Ne remplis pas artificiellement toute l'image avec une couleur.
+- Préserve les contours et les espaces négatifs importants.
 
+IMPORTANT POUR LA SORTIE :
 
-=========================================
-CAS PARTICULIER : TEXTE ET LOGOS
-=========================================
+Pour économiser de la place, la grille doit être fournie sous
+forme de chaînes de caractères.
 
-Si l'image contient du texte ou un logo,
-leur RECONNAISSANCE est prioritaire.
+Exemple pour une largeur de 5 :
 
-Ne transforme pas automatiquement les lettres
-en gros blocs de couleur.
+"00120"
 
-Pour un mot ou un logo :
+Chaque caractère représente une case.
 
-1. identifie sa forme générale ;
-2. identifie les contours ;
-3. identifie les espaces entre les lettres ;
-4. conserve les proportions ;
-5. simplifie les lettres pour qu'elles restent
-   reconnaissables dans la grille.
+Donc :
 
+"00120"
 
-=========================================
-INTERDICTIONS
-=========================================
+signifie :
 
-NE FAIS PAS une simple moyenne des pixels.
+[0, 0, 1, 2, 0]
 
-NE transforme PAS automatiquement l'image
-en un gros pâté de couleur.
+Tu dois produire exactement ${H} chaînes.
 
-NE sacrifie PAS un élément important simplement
-parce qu'il est petit.
+Chaque chaîne doit avoir exactement ${W} caractères.
 
-La reconnaissance du motif est plus importante
-que la fidélité pixel par pixel.
+Ne mets aucun espace dans les chaînes.
 
+La palette doit contenir exactement les couleurs réellement
+utilisées dans la grille, avec au maximum ${C} couleurs.
 
-=========================================
-PALETTE
-=========================================
+Les couleurs doivent être des codes HEX.
 
-Crée une palette contenant au maximum
-${numberOfColors} couleurs.
+Analyse d'abord l'image, puis construis le patron.
 
-Utilise des couleurs HEX au format :
-
-#RRGGBB
-
-Les indices utilisés dans la grille doivent
-correspondre aux indices de cette palette.
-
-La première couleur de la palette correspond
-à l'indice 0.
-
-La deuxième correspond à l'indice 1.
-
-Et ainsi de suite.
-
-
-=========================================
-GRILLE
-=========================================
-
-La grille doit avoir exactement :
-
-${patternHeight} lignes
-
-Chaque ligne doit avoir exactement :
-
-${patternWidth} nombres.
-
-Chaque nombre doit être un indice de couleur
-valide dans la palette.
-
-Si la palette contient N couleurs,
-les indices autorisés vont de 0 à N-1.
-
-
-=========================================
-OBJECTIF
-=========================================
-
-Imagine que cette grille va être réellement
-crochetée par une personne.
-
-Elle doit donc produire un motif lisible,
-propre et reconnaissable.
-
-Réponds uniquement avec le JSON demandé.
-
+La reconnaissance du motif est prioritaire sur les détails
+photographiques.
 `;
 
+    // ============================================================
+    // 6. SCHÉMA JSON STRICT
+    // ============================================================
 
-    // =========================================
-    // 6. Appel OpenAI
-    // =========================================
+    const schema = {
+      type: "object",
+
+      properties: {
+
+        description: {
+          type: "string"
+        },
+
+        elements: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              type: {
+                type: "string"
+              },
+              description: {
+                type: "string"
+              },
+              importance: {
+                type: "string"
+              }
+            },
+            required: [
+              "type",
+              "description",
+              "importance"
+            ],
+            additionalProperties: false
+          }
+        },
+
+        palette: {
+          type: "array",
+          items: {
+            type: "string"
+          }
+        },
+
+        grid: {
+          type: "array",
+          items: {
+            type: "string"
+          }
+        }
+
+      },
+
+      required: [
+        "description",
+        "elements",
+        "palette",
+        "grid"
+      ],
+
+      additionalProperties: false
+    };
+
+    // ============================================================
+    // 7. APPEL OPENAI
+    // ============================================================
 
     const response = await fetch(
       "https://api.openai.com/v1/responses",
       {
-
         method: "POST",
 
         headers: {
-
-          "Content-Type":
-            "application/json",
-
-          "Authorization":
-            `Bearer ${apiKey}`
-
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
         },
 
         body: JSON.stringify({
 
           model: "gpt-5.6",
 
+          max_output_tokens: Math.max(
+            12000,
+            Math.min(30000, W * H + 5000)
+          ),
+
           input: [
-
             {
-
               role: "user",
 
               content: [
 
                 {
-
                   type: "input_text",
-
                   text: prompt
-
                 },
 
                 {
-
                   type: "input_image",
-
                   image_url: image
-
                 }
 
               ]
-
             }
-
           ],
 
-
-          // Pour éviter que le modèle
-          // coupe la grille en cours de route.
-
-          max_output_tokens: 12000,
-
-
           text: {
-
             format: {
-
               type: "json_schema",
-
               name: "crochet_pattern",
-
               strict: true,
-
-              schema: {
-
-                type: "object",
-
-                properties: {
-
-                  description: {
-
-                    type: "string"
-
-                  },
-
-
-                  elements: {
-
-                    type: "array",
-
-                    items: {
-
-                      type: "object",
-
-                      properties: {
-
-                        type: {
-
-                          type: "string"
-
-                        },
-
-                        description: {
-
-                          type: "string"
-
-                        },
-
-                        importance: {
-
-                          type: "string"
-
-                        }
-
-                      },
-
-                      required: [
-
-                        "type",
-                        "description",
-                        "importance"
-
-                      ],
-
-                      additionalProperties: false
-
-                    }
-
-                  },
-
-
-                  palette: {
-
-                    type: "array",
-
-                    items: {
-
-                      type: "string"
-
-                    }
-
-                  },
-
-
-                  grid: {
-
-                    type: "array",
-
-                    items: {
-
-                      type: "array",
-
-                      items: {
-
-                        type: "integer"
-
-                      }
-
-                    }
-
-                  }
-
-                },
-
-
-                required: [
-
-                  "description",
-                  "elements",
-                  "palette",
-                  "grid"
-
-                ],
-
-
-                additionalProperties: false
-
-              }
-
+              schema: schema
             }
-
           }
 
         })
-
       }
     );
 
-
-    // =========================================
-    // 7. Gestion détaillée des erreurs OpenAI
-    // =========================================
+    // ============================================================
+    // 8. GESTION DES ERREURS OPENAI
+    // ============================================================
 
     if (!response.ok) {
 
-      const errorText =
-        await response.text();
+      const errorText = await response.text();
 
-
-      console.error(
-        "OPENAI ERROR:",
-        errorText
-      );
-
-
-      let readableError =
-        errorText;
-
+      let errorMessage = errorText;
 
       try {
+        const errorJson = JSON.parse(errorText);
 
-        const parsedError =
-          JSON.parse(errorText);
+        if (errorJson?.error?.message) {
+          errorMessage = errorJson.error.message;
+        }
+      } catch (_) {
+        // On garde le texte original
+      }
 
+      return res.status(response.status).json({
+        error: `OpenAI : ${errorMessage}`
+      });
+    }
 
-        if (
-          parsedError &&
-          parsedError.error
-        ) {
+    // ============================================================
+    // 9. RÉCUPÉRATION DU TEXTE
+    // ============================================================
+
+    const data = await response.json();
+
+    let outputText = "";
+
+    if (typeof data.output_text === "string") {
+      outputText = data.output_text;
+    }
+
+    // Sécurité supplémentaire si output_text n'est pas présent
+    if (!outputText && Array.isArray(data.output)) {
+
+      for (const item of data.output) {
+
+        if (item.type !== "message") {
+          continue;
+        }
+
+        if (!Array.isArray(item.content)) {
+          continue;
+        }
+
+        for (const content of item.content) {
 
           if (
-            typeof parsedError.error === "string"
+            content.type === "output_text" &&
+            typeof content.text === "string"
           ) {
-
-            readableError =
-              parsedError.error;
-
-          }
-
-          else if (
-            parsedError.error.message
-          ) {
-
-            readableError =
-              parsedError.error.message;
-
+            outputText += content.text;
           }
 
         }
-
       }
-
-      catch (e) {
-
-        // La réponse n'était pas du JSON.
-        // On conserve le texte brut.
-
-      }
-
-
-      return res.status(500).json({
-
-        error:
-          "OpenAI : " + readableError,
-
-        details:
-          errorText
-
-      });
-
     }
-
-
-    // =========================================
-    // 8. Lecture de la réponse
-    // =========================================
-
-    const data =
-      await response.json();
-
-
-    console.log(
-      "OPENAI RESPONSE RECEIVED"
-    );
-
-
-    const outputText =
-      data.output_text ||
-      data.output
-        ?.flatMap(
-          item => item.content || []
-        )
-        ?.find(
-          item =>
-            item.type === "output_text"
-        )
-        ?.text;
-
 
     if (!outputText) {
-
-      console.error(
-        "Réponse OpenAI complète :",
-        JSON.stringify(data)
-      );
-
-
       return res.status(500).json({
-
-        error:
-          "L'IA n'a renvoyé aucun résultat exploitable.",
-
-        details:
-          JSON.stringify(data)
-
+        error: "OpenAI n'a renvoyé aucun résultat exploitable."
       });
-
     }
 
-
-    // =========================================
-    // 9. Conversion JSON
-    // =========================================
+    // ============================================================
+    // 10. PARSING JSON
+    // ============================================================
 
     let result;
 
-
     try {
 
-      result =
-        JSON.parse(outputText);
+      result = JSON.parse(outputText);
 
-    }
+    } catch (error) {
 
-    catch (jsonError) {
+      // Tentative de récupération si jamais du texte parasite
+      // se trouve autour du JSON.
 
-      console.error(
-        "JSON IA invalide :",
-        outputText
-      );
+      const firstBrace = outputText.indexOf("{");
+      const lastBrace = outputText.lastIndexOf("}");
 
-
-      return res.status(500).json({
-
-        error:
-          "L'IA a répondu, mais son résultat n'est pas un JSON valide.",
-
-        details:
-          jsonError.message
-
-      });
-
-    }
-
-
-    // =========================================
-    // 10. Vérification de la palette
-    // =========================================
-
-    if (
-      !Array.isArray(result.palette)
-    ) {
-
-      return res.status(500).json({
-
-        error:
-          "L'IA n'a pas renvoyé de palette."
-
-      });
-
-    }
-
-
-    if (
-      result.palette.length === 0
-    ) {
-
-      return res.status(500).json({
-
-        error:
-          "La palette générée est vide."
-
-      });
-
-    }
-
-
-    if (
-      result.palette.length >
-      numberOfColors
-    ) {
-
-      return res.status(500).json({
-
-        error:
-          `L'IA a généré ${result.palette.length} couleurs au lieu de ${numberOfColors} maximum.`
-
-      });
-
-    }
-
-
-    // =========================================
-    // 11. Vérification de la grille
-    // =========================================
-
-    if (
-      !Array.isArray(result.grid)
-    ) {
-
-      return res.status(500).json({
-
-        error:
-          "L'IA n'a pas renvoyé de grille."
-
-      });
-
-    }
-
-
-    if (
-      result.grid.length !==
-      patternHeight
-    ) {
-
-      return res.status(500).json({
-
-        error:
-          `La grille contient ${result.grid.length} lignes au lieu de ${patternHeight}.`
-
-      });
-
-    }
-
-
-    for (
-      let y = 0;
-      y < result.grid.length;
-      y++
-    ) {
-
-      const row =
-        result.grid[y];
-
-
-      if (
-        !Array.isArray(row)
-      ) {
+      if (firstBrace === -1 || lastBrace === -1) {
 
         return res.status(500).json({
-
-          error:
-            `La ligne ${y + 1} n'est pas valide.`
-
+          error: "L'IA a répondu, mais son résultat n'est pas un JSON valide."
         });
 
       }
 
+      try {
 
-      if (
-        row.length !== patternWidth
-      ) {
+        const cleaned = outputText.slice(
+          firstBrace,
+          lastBrace + 1
+        );
+
+        result = JSON.parse(cleaned);
+
+      } catch (_) {
 
         return res.status(500).json({
-
-          error:
-            `La ligne ${y + 1} contient ${row.length} cases au lieu de ${patternWidth}.`
-
+          error: "L'IA a répondu, mais son résultat JSON est illisible."
         });
 
       }
-
-
-      for (
-        let x = 0;
-        x < row.length;
-        x++
-      ) {
-
-        const colorIndex =
-          row[x];
-
-
-        if (
-          !Number.isInteger(colorIndex)
-        ) {
-
-          return res.status(500).json({
-
-            error:
-              `La case ${x + 1}, ligne ${y + 1} contient un indice de couleur invalide.`
-
-          });
-
-        }
-
-
-        if (
-          colorIndex < 0 ||
-          colorIndex >= result.palette.length
-        ) {
-
-          return res.status(500).json({
-
-            error:
-              `Indice de couleur invalide à la case ${x + 1}, ligne ${y + 1}.`
-
-          });
-
-        }
-
-      }
-
     }
 
+    // ============================================================
+    // 11. VÉRIFICATION DE LA PALETTE
+    // ============================================================
 
-    // =========================================
-    // 12. Tout est bon
-    // =========================================
+    if (!Array.isArray(result.palette)) {
+
+      return res.status(500).json({
+        error: "La palette générée est invalide."
+      });
+    }
+
+    if (
+      result.palette.length < 1 ||
+      result.palette.length > C
+    ) {
+
+      return res.status(500).json({
+        error: `La palette contient ${result.palette.length} couleurs au lieu de ${C} maximum.`
+      });
+    }
+
+    // ============================================================
+    // 12. VÉRIFICATION DE LA GRILLE
+    // ============================================================
+
+    if (!Array.isArray(result.grid)) {
+
+      return res.status(500).json({
+        error: "La grille générée est invalide."
+      });
+    }
+
+    // EXACTEMENT H LIGNES
+    if (result.grid.length !== H) {
+
+      return res.status(500).json({
+        error: `La grille contient ${result.grid.length} lignes au lieu de ${H}.`
+      });
+    }
+
+    // ============================================================
+    // 13. CONVERSION DES CHAÎNES EN TABLEAU DE NOMBRES
+    // ============================================================
+
+    const finalGrid = [];
+
+    for (let y = 0; y < H; y++) {
+
+      const row = result.grid[y];
+
+      if (typeof row !== "string") {
+
+        return res.status(500).json({
+          error: `La ligne ${y + 1} de la grille n'est pas valide.`
+        });
+      }
+
+      // EXACTEMENT W CASES
+      if (row.length !== W) {
+
+        return res.status(500).json({
+          error:
+            `La ligne ${y + 1} contient ${row.length} cases au lieu de ${W}.`
+        });
+      }
+
+      const numericRow = [];
+
+      for (let x = 0; x < W; x++) {
+
+        const value = Number(row[x]);
+
+        if (
+          !Number.isInteger(value) ||
+          value < 0 ||
+          value >= result.palette.length
+        ) {
+
+          return res.status(500).json({
+            error:
+              `Valeur de couleur invalide à la ligne ${y + 1}, case ${x + 1}.`
+          });
+        }
+
+        numericRow.push(value);
+      }
+
+      finalGrid.push(numericRow);
+    }
+
+    // ============================================================
+    // 14. VÉRIFICATION FINALE
+    // ============================================================
+
+    if (finalGrid.length !== H) {
+
+      return res.status(500).json({
+        error: "Erreur interne : hauteur de grille incorrecte."
+      });
+    }
+
+    for (const row of finalGrid) {
+
+      if (row.length !== W) {
+
+        return res.status(500).json({
+          error: "Erreur interne : largeur de grille incorrecte."
+        });
+      }
+    }
+
+    // ============================================================
+    // 15. RÉPONSE À L'APPLICATION
+    // ============================================================
 
     return res.status(200).json({
 
+      success: true,
+
+      width: W,
+
+      height: H,
+
+      colors: result.palette.length,
+
       description:
-        result.description || "",
+        typeof result.description === "string"
+          ? result.description
+          : "",
 
       elements:
         Array.isArray(result.elements)
           ? result.elements
           : [],
 
-      palette:
-        result.palette,
+      palette: result.palette,
 
-      grid:
-        result.grid
+      grid: finalGrid
 
     });
 
+  } catch (error) {
 
-  }
-
-  catch (error) {
-
-    console.error(
-      "SERVER ERROR:",
-      error
-    );
-
+    console.error("Erreur serveur :", error);
 
     return res.status(500).json({
-
       error:
-        "Erreur serveur : " +
-        (error.message ||
-          "erreur inconnue"),
-
-      details:
-        error.stack ||
-        error.message ||
-        ""
-
+        error?.message ||
+        "Une erreur inattendue est survenue."
     });
-
   }
-
-}
+          }
