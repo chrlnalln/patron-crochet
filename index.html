@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
 
 <title>Patron Crochet AI</title>
 
 <style>
+
 * {
   box-sizing: border-box;
 }
@@ -21,7 +28,7 @@ body {
 header {
   background: #222;
   color: white;
-  padding: 22px 16px;
+  padding: 22px;
   text-align: center;
 }
 
@@ -33,7 +40,6 @@ header h1 {
 header p {
   margin: 7px 0 0;
   opacity: .8;
-  font-size: 14px;
 }
 
 main {
@@ -44,72 +50,15 @@ main {
 
 .card {
   background: white;
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 14px;
+  padding: 18px;
   margin-bottom: 16px;
-  box-shadow: 0 2px 10px rgba(0,0,0,.07);
+  box-shadow: 0 2px 10px rgba(0,0,0,.08);
 }
 
-.hidden {
-  display: none !important;
-}
-
-h2 {
-  margin-top: 0;
-  margin-bottom: 8px;
-}
-
+h2,
 h3 {
   margin-top: 0;
-}
-
-.subtitle {
-  color: #666;
-  font-size: 14px;
-  margin-bottom: 18px;
-}
-
-button {
-  border: 0;
-  border-radius: 10px;
-  padding: 11px 16px;
-  font-size: 15px;
-  cursor: pointer;
-  background: #222;
-  color: white;
-}
-
-button:hover {
-  opacity: .9;
-}
-
-button.secondary {
-  background: #eee;
-  color: #222;
-}
-
-button.primary {
-  background: #278cc1;
-}
-
-button.danger {
-  background: #b94a48;
-}
-
-button:disabled {
-  opacity: .45;
-  cursor: not-allowed;
-}
-
-input,
-select {
-  width: 100%;
-  min-height: 44px;
-  border: 1px solid #ccc;
-  border-radius: 9px;
-  padding: 9px 11px;
-  font-size: 15px;
-  background: white;
 }
 
 label {
@@ -118,268 +67,322 @@ label {
   margin-bottom: 7px;
 }
 
-.file-zone {
-  border: 2px dashed #bbb;
-  border-radius: 14px;
-  padding: 30px 20px;
-  text-align: center;
-  cursor: pointer;
-  background: #fafafa;
-}
-
-.file-zone:hover {
-  border-color: #278cc1;
-  background: #f5fbfe;
-}
-
-.file-zone input {
-  display: none;
-}
-
-.preview {
-  display: block;
-  max-width: 100%;
-  max-height: 350px;
-  margin: 18px auto 0;
-  border-radius: 10px;
-  object-fit: contain;
-}
-
-.info-box {
-  background: #f3f7fa;
-  border-radius: 10px;
-  padding: 13px;
-  margin-top: 15px;
-  font-size: 14px;
-}
-
-.analysis-box {
-  background: #f7f3ec;
-  border-radius: 12px;
-  padding: 15px;
-  margin-top: 15px;
-}
-
-.analysis-title {
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
-.recommendations {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.recommendation {
-  border: 2px solid #ddd;
-  border-radius: 11px;
-  padding: 12px;
-  text-align: center;
-  cursor: pointer;
+input[type="file"],
+select {
+  width: 100%;
+  min-height: 46px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 16px;
   background: white;
 }
 
-.recommendation:hover {
-  border-color: #278cc1;
+button {
+  border: none;
+  border-radius: 9px;
+  background: #222;
+  color: white;
+  min-height: 46px;
+  padding: 10px 16px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
-.recommendation.selected {
-  border-color: #278cc1;
-  background: #edf8fd;
+button:disabled {
+  opacity: .5;
+  cursor: default;
 }
 
-.recommendation strong {
-  display: block;
-  font-size: 17px;
+.primary {
+  background: #278cc1;
+  width: 100%;
 }
 
-.recommendation small {
+.secondary {
+  background: #777;
+}
+
+#preview {
+  width: 100%;
+  max-height: 350px;
+  object-fit: contain;
+  display: none;
+  border-radius: 10px;
+  margin-top: 14px;
+}
+
+.status {
+  margin-top: 12px;
+  text-align: center;
   color: #666;
+  line-height: 1.5;
 }
 
-.range-row {
+.analysisBox {
+  background: #f5f2ed;
+  padding: 14px;
+  border-radius: 10px;
+  margin-top: 12px;
+  line-height: 1.5;
+}
+
+.dimensionOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.dimensionButton {
+  background: white;
+  color: #222;
+  border: 2px solid #ddd;
+  min-height: 45px;
+}
+
+.dimensionButton.active {
+  background: #222;
+  color: white;
+  border-color: #222;
+}
+
+.colorRange {
+  font-size: 14px;
+  color: #555;
+}
+
+.generationControls {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
 
-.grid-info {
+#analysisCard,
+#patternCard,
+#symmetryCard,
+#regenerateCard {
+  display: none;
+}
+
+
+/* =========================
+   ZOOM
+   ========================= */
+
+.zoomControls {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
   flex-wrap: wrap;
-  gap: 8px;
   margin-bottom: 12px;
-  color: #666;
-  font-size: 14px;
 }
 
-.grid-wrapper {
+.zoomControls button {
+  width: 50px;
+  font-size: 22px;
+}
+
+.zoomControls #fitScreen {
+  width: auto;
+  font-size: 13px;
+}
+
+#zoomLabel {
+  min-width: 55px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+
+/* =========================
+   GRILLE
+   ========================= */
+
+#patternContainer {
   width: 100%;
-  height: 560px;
   overflow: auto;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  background:
-    linear-gradient(45deg,#fafafa 25%,transparent 25%),
-    linear-gradient(-45deg,#fafafa 25%,transparent 25%),
-    linear-gradient(45deg,transparent 75%,#fafafa 75%),
-    linear-gradient(-45deg,transparent 75%,#fafafa 75%);
-  background-size: 20px 20px;
-  background-position: 0 0,0 10px,10px -10px,-10px 0;
-  position: relative;
+  background: #eee;
+  border-radius: 10px;
+  padding: 12px;
+  -webkit-overflow-scrolling: touch;
 }
 
-#grid {
+#pattern {
   display: grid;
-  transform-origin: top left;
   width: max-content;
-  height: max-content;
+  margin: auto;
 }
 
 .cell {
-  width: 16px;
-  height: 16px;
-  border: 1px solid rgba(0,0,0,.10);
+  border-right: 1px solid rgba(0,0,0,.22);
+  border-bottom: 1px solid rgba(0,0,0,.22);
   cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
 }
 
-.cell:hover {
-  outline: 2px solid #222;
-  outline-offset: -2px;
-}
 
-.zoom-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 12px;
-}
-
-.zoom-value {
-  min-width: 55px;
-  text-align: center;
-  font-weight: bold;
-}
+/* =========================
+   PALETTE
+   ========================= */
 
 .palette {
   display: flex;
   flex-wrap: wrap;
-  gap: 9px;
+  gap: 12px;
   margin-top: 12px;
 }
 
-.palette-item {
+.paletteItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.paletteColor {
   width: 48px;
   height: 48px;
-  border-radius: 9px;
-  border: 3px solid transparent;
-  cursor: pointer;
-  position: relative;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 0 0 1px #aaa;
 }
 
-.palette-item.selected {
-  border-color: #222;
+.paletteItem.selected .paletteColor {
+  box-shadow: 0 0 0 3px #222;
+  transform: scale(1.08);
 }
 
-.palette-item span {
-  position: absolute;
-  left: 2px;
-  right: 2px;
-  bottom: 2px;
-  background: rgba(255,255,255,.85);
-  font-size: 9px;
-  text-align: center;
-  border-radius: 3px;
-}
-
-.quick-colors {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 7px;
-  margin-top: 12px;
-}
-
-.quick-color {
-  aspect-ratio: 1;
-  border-radius: 7px;
-  border: 2px solid transparent;
-  cursor: pointer;
-}
-
-.quick-color:hover {
-  border-color: #222;
-}
-
-.color-editor {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  margin-top: 15px;
-}
-
-.color-editor input[type="color"] {
-  width: 55px;
-  height: 44px;
-  padding: 2px;
-}
-
-.color-editor input[type="text"] {
-  flex: 1;
-}
-
-.symmetry-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 9px;
-}
-
-.symmetry-btn {
-  background: #eee;
-  color: #222;
-}
-
-.symmetry-btn.active {
-  background: #278cc1;
-  color: white;
-}
-
-.status {
-  padding: 13px;
-  border-radius: 10px;
-  margin-top: 12px;
-  background: #f2f2f2;
-  font-size: 14px;
-}
-
-.status.loading {
-  background: #fff5d9;
-}
-
-.status.success {
-  background: #e8f7ec;
-}
-
-.status.error {
-  background: #fdeaea;
-  color: #8d2222;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 9px;
-  margin-top: 15px;
-}
-
-.small {
-  font-size: 13px;
+.paletteNumber {
+  font-size: 11px;
   color: #666;
 }
 
+
+/* =========================
+   ÉDITEUR COULEUR
+   ========================= */
+
+#colorEditor {
+  display: none;
+  margin-top: 18px;
+  padding: 16px;
+  background: #f5f2ed;
+  border-radius: 12px;
+}
+
+#colorWheel {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  margin: 15px auto;
+  position: relative;
+  cursor: crosshair;
+
+  background:
+    conic-gradient(
+      red,
+      yellow,
+      lime,
+      cyan,
+      blue,
+      magenta,
+      red
+    );
+}
+
+#colorWheel::after {
+  content: "";
+  position: absolute;
+  inset: 18%;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle,
+      white 0%,
+      rgba(255,255,255,0) 70%
+    );
+  pointer-events: none;
+}
+
+#wheelCursor {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 3px solid white;
+  box-shadow: 0 0 0 2px #222;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.quickColors {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 7px;
+}
+
+.quickColor {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 7px;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px #aaa;
+}
+
+.editorButtons {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.editorButtons button {
+  flex: 1;
+}
+
+
+/* =========================
+   SYMÉTRIE
+   ========================= */
+
+.symmetryOptions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.symmetryButton {
+  background: white;
+  color: #222;
+  border: 2px solid #ddd;
+}
+
+.symmetryButton.active {
+  background: #222;
+  color: white;
+}
+
+.symmetryButton.full {
+  grid-column: 1 / -1;
+}
+
+#resetSymmetry {
+  width: 100%;
+  margin-top: 10px;
+  background: #777;
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
 @media (max-width: 600px) {
+
   main {
     padding: 10px;
   }
@@ -388,1778 +391,2614 @@ label {
     padding: 15px;
   }
 
-  .grid-wrapper {
-    height: 430px;
+  .generationControls {
+    grid-template-columns: 1fr;
   }
 
-  .quick-colors {
-    grid-template-columns: repeat(8, 1fr);
+  .symmetryOptions {
+    grid-template-columns: 1fr;
   }
 
-  .cell {
-    width: 14px;
-    height: 14px;
+  .symmetryButton.full {
+    grid-column: auto;
+  }
+
+  #colorWheel {
+    width: 200px;
+    height: 200px;
   }
 }
+
 </style>
+
 </head>
+
 
 <body>
 
+
 <header>
-  <h1>🧶 Patron Crochet AI</h1>
-  <p>Transforme ton image en patron de tapestry crochet</p>
+
+<h1>🧶 Patron Crochet AI</h1>
+
+<p>
+Transforme une image en patron de tapestry crochet
+</p>
+
 </header>
+
 
 <main>
 
-  <!-- ========================================================= -->
-  <!-- ETAPE 1 : IMAGE -->
-  <!-- ========================================================= -->
-
-  <section class="card">
-    <h2>1. Ton image</h2>
-
-    <p class="subtitle">
-      Commence par importer l'image que tu souhaites transformer en patron.
-      L'IA analysera d'abord l'image avant de proposer les paramètres du patron.
-    </p>
-
-    <label class="file-zone" for="imageInput">
-      <strong>📷 Clique ici pour choisir ton image</strong>
-      <br>
-      <span class="small">
-        JPG, PNG ou WEBP
-      </span>
-      <input
-        id="imageInput"
-        type="file"
-        accept="image/png,image/jpeg,image/webp"
-      >
-    </label>
-
-    <img
-      id="preview"
-      class="preview hidden"
-      alt="Aperçu de l'image"
-    >
-
-    <div
-      id="imageInfo"
-      class="info-box hidden"
-    ></div>
-
-    <div class="actions">
-      <button
-        id="analyzeBtn"
-        class="primary"
-        disabled
-      >
-        🧠 Analyser mon image
-      </button>
-    </div>
-
-    <div
-      id="analysisStatus"
-      class="status hidden"
-    ></div>
-  </section>
-
-
-  <!-- ========================================================= -->
-  <!-- ETAPE 2 : ANALYSE IA -->
-  <!-- ========================================================= -->
-
-  <section
-    id="analysisSection"
-    class="card hidden"
-  >
-
-    <h2>2. Analyse de ton image</h2>
-
-    <div class="analysis-box">
-
-      <div class="analysis-title">
-        🧠 Ce que l'IA a identifié
-      </div>
-
-      <div id="analysisText">
-        Analyse en cours...
-      </div>
-
-    </div>
-
-    <div
-      id="importantElements"
-      class="info-box hidden"
-    ></div>
-
-  </section>
-
-
-  <!-- ========================================================= -->
-  <!-- ETAPE 3 : DIMENSIONS -->
-  <!-- ========================================================= -->
-
-  <section
-    id="settingsSection"
-    class="card hidden"
-  >
-
-    <h2>3. Choisis les dimensions du patron</h2>
-
-    <p class="subtitle">
-      L'IA te propose des formats cohérents avec ton image.
-      Tu peux choisir celui qui te convient.
-    </p>
-
-    <div id="dimensionRecommendations"></div>
-
-    <div class="range-row" style="margin-top:18px">
-
-      <div>
-        <label for="widthInput">
-          Largeur
-        </label>
-
-        <input
-          id="widthInput"
-          type="number"
-          min="20"
-          max="200"
-          step="1"
-        >
-      </div>
-
-      <div>
-        <label for="heightInput">
-          Hauteur
-        </label>
-
-        <input
-          id="heightInput"
-          type="number"
-          min="20"
-          max="200"
-          step="1"
-        >
-      </div>
-
-    </div>
-
-
-    <h2 style="margin-top:25px">
-      🎨 Nombre de couleurs
-    </h2>
-
-    <p class="subtitle">
-      L'IA recommande un nombre de couleurs en fonction de ton image.
-      Tu peux ensuite l'ajuster.
-    </p>
-
-    <div id="colorRecommendations"></div>
-
-    <div class="range-row" style="margin-top:18px">
-
-      <div>
-        <label for="colorsInput">
-          Nombre de couleurs
-        </label>
-
-        <input
-          id="colorsInput"
-          type="number"
-          min="2"
-          max="20"
-          step="1"
-        >
-      </div>
-
-      <div>
-        <label>
-          Fourchette proposée
-        </label>
-
-        <div
-          id="colorRangeText"
-          class="info-box"
-          style="margin-top:0"
-        >
-          -
-        </div>
-      </div>
-
-    </div>
-
-    <div class="actions">
-
-      <button
-        id="generateBtn"
-        class="primary"
-      >
-        🧶 Générer mon patron
-      </button>
-
-    </div>
-
-    <div
-      id="generationStatus"
-      class="status hidden"
-    ></div>
-
-  </section>
-
-
-  <!-- ========================================================= -->
-  <!-- ETAPE 4 : PATRON -->
-  <!-- ========================================================= -->
-
-  <section
-    id="patternSection"
-    class="card hidden"
-  >
-
-    <h2>4. Ton patron</h2>
-
-    <div
-      id="patternInfo"
-      class="grid-info"
-    ></div>
-
-    <div class="zoom-controls">
-
-      <button
-        id="zoomOut"
-        class="secondary"
-      >
-        −
-      </button>
-
-      <span
-        id="zoomValue"
-        class="zoom-value"
-      >
-        100%
-      </span>
-
-      <button
-        id="zoomIn"
-        class="secondary"
-      >
-        +
-      </button>
-
-      <button
-        id="fitScreen"
-        class="secondary"
-      >
-        Adapter à l'écran
-      </button>
-
-      <button
-        id="resetZoom"
-        class="secondary"
-      >
-        100%
-      </button>
-
-    </div>
-
-    <div
-      id="gridWrapper"
-      class="grid-wrapper"
-    >
-      <div id="grid"></div>
-    </div>
-
-    <div class="actions">
-
-      <button
-        id="regenerateBtn"
-        class="primary"
-      >
-        🔄 Régénérer avec ces paramètres
-      </button>
-
-      <button
-        id="resetPatternBtn"
-        class="secondary"
-      >
-        ↩️ Revenir au patron initial
-      </button>
-
-    </div>
-
-    <p class="small">
-      💡 Clique sur une maille pour la modifier avec la couleur sélectionnée.
-    </p>
-
-  </section>
-
-
-  <!-- ========================================================= -->
-  <!-- ETAPE 5 : COULEURS -->
-  <!-- ========================================================= -->
-
-  <section
-    id="colorsSection"
-    class="card hidden"
-  >
-
-    <h2>5. Couleurs du patron</h2>
-
-    <p class="subtitle">
-      Sélectionne une couleur puis clique sur les mailles du patron
-      pour les modifier.
-    </p>
-
-    <div id="palette" class="palette"></div>
-
-    <div class="color-editor">
-
-      <input
-        id="colorPicker"
-        type="color"
-        value="#000000"
-      >
-
-      <input
-        id="hexInput"
-        type="text"
-        value="#000000"
-        maxlength="7"
-      >
-
-      <button
-        id="applyColor"
-        class="secondary"
-      >
-        Modifier
-      </button>
-
-    </div>
-
-    <h3 style="margin-top:22px">
-      Couleurs rapides
-    </h3>
-
-    <div
-      id="quickColors"
-      class="quick-colors"
-    ></div>
-
-  </section>
-
-
-  <!-- ========================================================= -->
-  <!-- ETAPE 6 : SYMETRIE -->
-  <!-- ========================================================= -->
-
-  <section
-    id="symmetrySection"
-    class="card hidden"
-  >
-
-    <h2>6. Symétrie du patron</h2>
-
-    <p class="subtitle">
-      Utilise ces options si tu souhaites créer une composition symétrique.
-    </p>
-
-    <div class="symmetry-grid">
-
-      <button
-        class="symmetry-btn"
-        data-symmetry="none"
-      >
-        Aucune
-      </button>
-
-      <button
-        class="symmetry-btn"
-        data-symmetry="horizontal"
-      >
-        ↔️ Gauche / droite
-      </button>
-
-      <button
-        class="symmetry-btn"
-        data-symmetry="vertical"
-      >
-        ↕️ Haut / bas
-      </button>
-
-      <button
-        class="symmetry-btn"
-        data-symmetry="four"
-      >
-        ✳️ Quatre côtés
-      </button>
-
-    </div>
-
-    <div class="actions">
-
-      <button
-        id="applySymmetry"
-        class="primary"
-      >
-        Appliquer la symétrie
-      </button>
-
-      <button
-        id="undoSymmetry"
-        class="secondary"
-      >
-        Annuler
-      </button>
-
-    </div>
-
-  </section>
+
+<!-- =====================================================
+     1. IMAGE
+     ===================================================== -->
+
+<div class="card">
+
+<h2>1. Ton image</h2>
+
+<input
+  type="file"
+  id="image"
+  accept="image/*"
+>
+
+<img
+  id="preview"
+  alt="Aperçu"
+>
+
+<button
+  id="analyzeButton"
+  class="primary"
+  type="button"
+>
+🧠 Analyser mon image
+</button>
+
+<div
+  id="status"
+  class="status"
+>
+Choisis une image pour commencer.
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     2. ANALYSE
+     ===================================================== -->
+
+<div
+  class="card"
+  id="analysisCard"
+>
+
+<h2>2. Analyse de l'image</h2>
+
+<div
+  id="analysisText"
+  class="analysisBox"
+></div>
+
+<h3>
+📐 Dimensions proposées
+</h3>
+
+<div
+  id="dimensionOptions"
+  class="dimensionOptions"
+></div>
+
+<h3>
+🎨 Nombre de couleurs
+</h3>
+
+<div
+  id="colorRecommendation"
+  class="analysisBox"
+></div>
+
+<button
+  id="firstGenerateButton"
+  class="primary"
+  type="button"
+>
+🧶 Créer mon premier patron
+</button>
+
+</div>
+
+
+<!-- =====================================================
+     3. PATRON
+     ===================================================== -->
+
+<div
+  class="card"
+  id="patternCard"
+>
+
+<h2>
+Ton patron
+</h2>
+
+
+<div class="zoomControls">
+
+<button
+  id="zoomOut"
+  type="button"
+>
+−
+</button>
+
+<button
+  id="zoomReset"
+  type="button"
+>
+100 %
+</button>
+
+<button
+  id="zoomIn"
+  type="button"
+>
++
+</button>
+
+<button
+  id="fitScreen"
+  type="button"
+>
+📱 Adapter à l'écran
+</button>
+
+<span id="zoomLabel">
+100 %
+</span>
+
+</div>
+
+
+<div
+  class="analysisBox"
+>
+🎨 Sélectionne une couleur puis touche une maille pour la modifier.
+</div>
+
+
+<div id="patternContainer">
+
+<div id="pattern"></div>
+
+</div>
+
+
+<!-- PALETTE DIRECTEMENT SOUS LE PATRON -->
+
+<h2 style="margin-top:22px;">
+🎨 Couleurs du patron
+</h2>
+
+<p class="analysisBox">
+Clique sur une couleur pour la modifier.
+Double-clique sur une couleur pour la sélectionner et l'appliquer aux mailles.
+</p>
+
+<div
+  id="palette"
+  class="palette"
+></div>
+
+
+<div id="colorEditor">
+
+<h3>
+Modifier cette couleur
+</h3>
+
+<div
+  style="
+    display:flex;
+    align-items:center;
+    gap:10px;
+  "
+>
+
+<div
+  id="currentColorBox"
+  style="
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    box-shadow:0 0 0 1px #999;
+  "
+></div>
+
+<strong id="currentColorHex">
+#000000
+</strong>
+
+</div>
+
+
+<div id="colorWheel">
+
+<div id="wheelCursor"></div>
+
+</div>
+
+
+<h3>
+🎨 Couleurs rapides
+</h3>
+
+<div
+  id="quickColors"
+  class="quickColors"
+></div>
+
+
+<div class="editorButtons">
+
+<button
+  id="cancelColor"
+  class="secondary"
+  type="button"
+>
+Annuler
+</button>
+
+<button
+  id="applyColor"
+  type="button"
+>
+✅ Appliquer
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     4. SYMÉTRIE
+     ===================================================== -->
+
+<div
+  class="card"
+  id="symmetryCard"
+>
+
+<h2>
+🪞 Symétrie du patron
+</h2>
+
+<div class="analysisBox">
+
+L'IA peut produire une légère asymétrie.
+Choisis la partie du patron que tu veux utiliser
+comme référence.
+
+</div>
+
+
+<div class="symmetryOptions">
+
+<button
+  class="symmetryButton"
+  data-mode="none"
+  type="button"
+>
+Aucune
+</button>
+
+<button
+  class="symmetryButton"
+  data-mode="left"
+  type="button"
+>
+↔️ Gauche → Droite
+</button>
+
+<button
+  class="symmetryButton"
+  data-mode="right"
+  type="button"
+>
+↔️ Droite → Gauche
+</button>
+
+<button
+  class="symmetryButton"
+  data-mode="top"
+  type="button"
+>
+↕️ Haut → Bas
+</button>
+
+<button
+  class="symmetryButton"
+  data-mode="bottom"
+  type="button"
+>
+↕️ Bas → Haut
+</button>
+
+<button
+  class="symmetryButton full"
+  data-mode="four"
+  type="button"
+>
+✣ Quatre côtés
+</button>
+
+</div>
+
+
+<button
+  id="resetSymmetry"
+  type="button"
+>
+↩️ Revenir au patron original
+</button>
+
+</div>
+
+
+<!-- =====================================================
+     5. MODIFIER LE PATRON
+     ===================================================== -->
+
+<div
+  class="card"
+  id="regenerateCard"
+>
+
+<h2>
+⚙️ Modifier le patron
+</h2>
+
+<div class="analysisBox">
+Tu peux maintenant modifier les dimensions et le nombre de couleurs.
+L'IA va recréer le patron à partir de son analyse initiale.
+</div>
+
+
+<div class="generationControls">
+
+<div>
+
+<label for="regenerateDimensions">
+Dimensions
+</label>
+
+<select
+  id="regenerateDimensions"
+></select>
+
+</div>
+
+
+<div>
+
+<label for="regenerateColors">
+Nombre de couleurs
+</label>
+
+<select
+  id="regenerateColors"
+></select>
+
+</div>
+
+</div>
+
+
+<button
+  id="regenerateButton"
+  class="primary"
+  style="margin-top:12px;"
+  type="button"
+>
+🔄 Régénérer le patron
+</button>
+
+</div>
+
 
 </main>
 
 
 <script>
 
-/* ============================================================
+
+/* =====================================================
+   ELEMENTS
+   ===================================================== */
+
+const imageInput =
+  document.getElementById("image");
+
+const preview =
+  document.getElementById("preview");
+
+const analyzeButton =
+  document.getElementById("analyzeButton");
+
+const firstGenerateButton =
+  document.getElementById(
+    "firstGenerateButton"
+  );
+
+const regenerateButton =
+  document.getElementById(
+    "regenerateButton"
+  );
+
+const status =
+  document.getElementById("status");
+
+const analysisCard =
+  document.getElementById(
+    "analysisCard"
+  );
+
+const analysisText =
+  document.getElementById(
+    "analysisText"
+  );
+
+const dimensionOptions =
+  document.getElementById(
+    "dimensionOptions"
+  );
+
+const colorRecommendation =
+  document.getElementById(
+    "colorRecommendation"
+  );
+
+const patternCard =
+  document.getElementById(
+    "patternCard"
+  );
+
+const pattern =
+  document.getElementById(
+    "pattern"
+  );
+
+const patternContainer =
+  document.getElementById(
+    "patternContainer"
+  );
+
+const palette =
+  document.getElementById(
+    "palette"
+  );
+
+const symmetryCard =
+  document.getElementById(
+    "symmetryCard"
+  );
+
+const regenerateCard =
+  document.getElementById(
+    "regenerateCard"
+  );
+
+const regenerateDimensions =
+  document.getElementById(
+    "regenerateDimensions"
+  );
+
+const regenerateColors =
+  document.getElementById(
+    "regenerateColors"
+  );
+
+const zoomIn =
+  document.getElementById(
+    "zoomIn"
+  );
+
+const zoomOut =
+  document.getElementById(
+    "zoomOut"
+  );
+
+const zoomReset =
+  document.getElementById(
+    "zoomReset"
+  );
+
+const fitScreen =
+  document.getElementById(
+    "fitScreen"
+  );
+
+const zoomLabel =
+  document.getElementById(
+    "zoomLabel"
+  );
+
+const colorEditor =
+  document.getElementById(
+    "colorEditor"
+  );
+
+const colorWheel =
+  document.getElementById(
+    "colorWheel"
+  );
+
+const wheelCursor =
+  document.getElementById(
+    "wheelCursor"
+  );
+
+const quickColors =
+  document.getElementById(
+    "quickColors"
+  );
+
+const currentColorBox =
+  document.getElementById(
+    "currentColorBox"
+  );
+
+const currentColorHex =
+  document.getElementById(
+    "currentColorHex"
+  );
+
+const applyColor =
+  document.getElementById(
+    "applyColor"
+  );
+
+const cancelColor =
+  document.getElementById(
+    "cancelColor"
+  );
+
+
+/* =====================================================
    VARIABLES
-   ============================================================ */
+   ===================================================== */
 
-let selectedFile = null;
-
-let originalGrid = null;
-let currentGrid = null;
-
-let gridWidth = 0;
-let gridHeight = 0;
-
-let palette = [];
-let selectedColorIndex = 0;
-
-let zoom = 1;
+let imageData = null;
 
 let analysisData = null;
 
+let selectedWidth = null;
 
-/* ============================================================
-   ELEMENTS
-   ============================================================ */
+let selectedHeight = null;
 
-const imageInput = document.getElementById("imageInput");
-const preview = document.getElementById("preview");
-const imageInfo = document.getElementById("imageInfo");
+let selectedColors = null;
 
-const analyzeBtn = document.getElementById("analyzeBtn");
+let currentPalette = [];
 
-const analysisSection =
-  document.getElementById("analysisSection");
+let currentGrid = null;
 
-const analysisText =
-  document.getElementById("analysisText");
+let originalGrid = null;
 
-const importantElements =
-  document.getElementById("importantElements");
+let selectedPaletteIndex = null;
 
-const settingsSection =
-  document.getElementById("settingsSection");
+let editingPaletteIndex = null;
 
-const dimensionRecommendations =
-  document.getElementById("dimensionRecommendations");
+let editingColor = "#000000";
 
-const colorRecommendations =
-  document.getElementById("colorRecommendations");
+let zoomLevel = 1;
 
-const widthInput =
-  document.getElementById("widthInput");
+const BASE_CELL_SIZE = 22;
 
-const heightInput =
-  document.getElementById("heightInput");
+const MIN_ZOOM = 0.10;
 
-const colorsInput =
-  document.getElementById("colorsInput");
+const MAX_ZOOM = 3;
 
-const colorRangeText =
-  document.getElementById("colorRangeText");
-
-const generateBtn =
-  document.getElementById("generateBtn");
-
-const generationStatus =
-  document.getElementById("generationStatus");
-
-const analysisStatus =
-  document.getElementById("analysisStatus");
-
-const patternSection =
-  document.getElementById("patternSection");
-
-const colorsSection =
-  document.getElementById("colorsSection");
-
-const symmetrySection =
-  document.getElementById("symmetrySection");
-
-const grid =
-  document.getElementById("grid");
-
-const gridWrapper =
-  document.getElementById("gridWrapper");
-
-const patternInfo =
-  document.getElementById("patternInfo");
-
-const paletteElement =
-  document.getElementById("palette");
-
-const quickColorsElement =
-  document.getElementById("quickColors");
-
-const colorPicker =
-  document.getElementById("colorPicker");
-
-const hexInput =
-  document.getElementById("hexInput");
-
-const zoomValue =
-  document.getElementById("zoomValue");
+const ZOOM_STEP = 0.10;
 
 
-/* ============================================================
+/* =====================================================
    COULEURS RAPIDES
-   ============================================================ */
+   ===================================================== */
 
 const QUICK_COLORS = [
   "#000000",
   "#FFFFFF",
-  "#F44336",
-  "#FF9800",
-  "#FFEB3B",
-  "#4CAF50",
-  "#00BCD4",
-  "#2196F3",
-  "#3F51B5",
-  "#9C27B0",
-  "#E91E63",
-  "#795548",
-  "#9E9E9E",
-  "#607D8B",
-  "#8BC34A",
-  "#FFC107"
+  "#FF0000",
+  "#FF8000",
+  "#FFFF00",
+  "#00CC44",
+  "#00BFFF",
+  "#0047FF",
+  "#8000FF",
+  "#FF00AA",
+  "#8B4513",
+  "#C0C0C0",
+  "#808080",
+  "#FFC0CB",
+  "#00A86B",
+  "#F5DEB3"
 ];
 
-function renderQuickColors() {
 
-  quickColorsElement.innerHTML = "";
+QUICK_COLORS.forEach(
+  function(color) {
 
-  QUICK_COLORS.forEach(color => {
+    const button =
+      document.createElement(
+        "button"
+      );
 
-    const button = document.createElement("button");
+    button.type = "button";
 
-    button.className = "quick-color";
+    button.className =
+      "quickColor";
 
-    button.style.background = color;
+    button.style.background =
+      color;
 
-    button.title = color;
-
-    button.addEventListener("click", () => {
-
-      setSelectedColor(color);
-
-    });
-
-    quickColorsElement.appendChild(button);
-
-  });
-
-}
-
-
-/* ============================================================
-   IMPORT IMAGE
-   ============================================================ */
-
-imageInput.addEventListener("change", event => {
-
-  const file = event.target.files[0];
-
-  if (!file) return;
-
-  selectedFile = file;
-
-  const url = URL.createObjectURL(file);
-
-  preview.src = url;
-
-  preview.classList.remove("hidden");
-
-  imageInfo.classList.remove("hidden");
-
-  imageInfo.innerHTML =
-    `<strong>${escapeHtml(file.name)}</strong><br>
-     Taille : ${(file.size / 1024).toFixed(1)} Ko`;
-
-  analyzeBtn.disabled = false;
-
-  hideAfterUpload();
-
-});
-
-
-function hideAfterUpload() {
-
-  analysisSection.classList.add("hidden");
-
-  settingsSection.classList.add("hidden");
-
-  patternSection.classList.add("hidden");
-
-  colorsSection.classList.add("hidden");
-
-  symmetrySection.classList.add("hidden");
-
-}
-
-
-/* ============================================================
-   ANALYSE IA
-   ============================================================ */
-
-analyzeBtn.addEventListener("click", analyzeImage);
-
-
-async function analyzeImage() {
-
-  if (!selectedFile) return;
-
-  setStatus(
-    analysisStatus,
-    "🧠 L'IA analyse ton image...",
-    "loading"
-  );
-
-  analysisStatus.classList.remove("hidden");
-
-  analyzeBtn.disabled = true;
-
-  try {
-
-    const formData = new FormData();
-
-    formData.append("image", selectedFile);
-
-    formData.append("action", "analyze");
-
-    const response = await fetch(
-      "/api/analyze",
-      {
-        method: "POST",
-        body: formData
+    button.addEventListener(
+      "click",
+      function() {
+        setEditingColor(color);
       }
     );
 
-    const data = await response.json();
-
-    if (!response.ok) {
-
-      throw new Error(
-        data.error || "Erreur pendant l'analyse."
-      );
-
-    }
-
-    analysisData = data;
-
-    displayAnalysis(data);
-
-    displayRecommendations(data);
-
-    analysisSection.classList.remove("hidden");
-
-    settingsSection.classList.remove("hidden");
-
-    setStatus(
-      analysisStatus,
-      "✅ Analyse terminée.",
-      "success"
+    quickColors.appendChild(
+      button
     );
 
-  } catch (error) {
-
-    console.error(error);
-
-    setStatus(
-      analysisStatus,
-      "❌ " + error.message,
-      "error"
-    );
-
-  } finally {
-
-    analyzeBtn.disabled = false;
-
   }
-
-}
-
-
-/* ============================================================
-   AFFICHAGE ANALYSE
-   ============================================================ */
-
-function displayAnalysis(data) {
-
-  const description =
-    data.description ||
-    data.image_description ||
-    data.summary ||
-    "L'image a été analysée.";
-
-  analysisText.textContent = description;
-
-  const elements =
-    data.important_elements ||
-    data.importantElements ||
-    [];
-
-  if (Array.isArray(elements) && elements.length) {
-
-    importantElements.classList.remove("hidden");
-
-    importantElements.innerHTML =
-      `<strong>Éléments importants à conserver :</strong>
-       <ul>
-       ${elements
-         .map(item => `<li>${escapeHtml(item)}</li>`)
-         .join("")}
-       </ul>`;
-
-  } else {
-
-    importantElements.classList.add("hidden");
-
-  }
-
-}
-
-
-/* ============================================================
-   RECOMMANDATIONS
-   ============================================================ */
-
-function displayRecommendations(data) {
-
-  const dimensions =
-    data.recommended_dimensions ||
-    data.recommendedDimensions ||
-    [];
-
-  dimensionRecommendations.innerHTML = "";
-
-  if (dimensions.length) {
-
-    const container =
-      document.createElement("div");
-
-    container.className = "recommendations";
-
-    dimensions.forEach((dimension, index) => {
-
-      const width =
-        dimension.width || dimension[0];
-
-      const height =
-        dimension.height || dimension[1];
-
-      const card =
-        document.createElement("div");
-
-      card.className =
-        "recommendation" +
-        (index === 0 ? " selected" : "");
-
-      card.innerHTML =
-        `<strong>${width} × ${height}</strong>
-         <small>
-         ${index === 0 ? "Recommandé" : "Alternative"}
-         </small>`;
-
-      card.addEventListener("click", () => {
-
-        document
-          .querySelectorAll(".recommendation")
-          .forEach(el =>
-            el.classList.remove("selected")
-          );
-
-        card.classList.add("selected");
-
-        widthInput.value = width;
-        heightInput.value = height;
-
-      });
-
-      container.appendChild(card);
-
-    });
-
-    dimensionRecommendations.appendChild(container);
-
-    const first = dimensions[0];
-
-    widthInput.value =
-      first.width || first[0];
-
-    heightInput.value =
-      first.height || first[1];
-
-  } else {
-
-    widthInput.value =
-      data.width ||
-      data.recommended_width ||
-      60;
-
-    heightInput.value =
-      data.height ||
-      data.recommended_height ||
-      60;
-
-  }
-
-
-  const recommendedColors =
-    data.recommended_colors ||
-    data.recommendedColors ||
-    8;
-
-  const minColors =
-    data.min_colors ||
-    data.minColors ||
-    Math.max(2, recommendedColors - 2);
-
-  const maxColors =
-    data.max_colors ||
-    data.maxColors ||
-    Math.min(20, recommendedColors + 2);
-
-  colorsInput.value = recommendedColors;
-
-  colorsInput.min = minColors;
-  colorsInput.max = maxColors;
-
-  colorRangeText.textContent =
-    `${minColors} à ${maxColors} couleurs`;
-
-  colorRecommendations.innerHTML = "";
-
-  const colorContainer =
-    document.createElement("div");
-
-  colorContainer.className =
-    "recommendations";
-
-  for (
-    let number = minColors;
-    number <= maxColors;
-    number++
-  ) {
-
-    const card =
-      document.createElement("div");
-
-    card.className =
-      "recommendation" +
-      (number === recommendedColors
-        ? " selected"
-        : "");
-
-    card.innerHTML =
-      `<strong>${number}</strong>
-       <small>
-       ${number === recommendedColors
-         ? "Recommandé"
-         : "couleurs"}
-       </small>`;
-
-    card.addEventListener("click", () => {
-
-      document
-        .querySelectorAll("#colorRecommendations .recommendation")
-        .forEach(el =>
-          el.classList.remove("selected")
-        );
-
-      card.classList.add("selected");
-
-      colorsInput.value = number;
-
-    });
-
-    colorContainer.appendChild(card);
-
-  }
-
-  colorRecommendations.appendChild(colorContainer);
-
-}
-
-
-/* ============================================================
-   GENERATION DU PATRON
-   ============================================================ */
-
-generateBtn.addEventListener(
-  "click",
-  generatePattern
 );
 
-document
-  .getElementById("regenerateBtn")
-  .addEventListener(
-    "click",
-    generatePattern
-  );
+
+/* =====================================================
+   IMAGE
+   ===================================================== */
+
+function compressImage(file) {
+
+  return new Promise(
+    function(resolve, reject) {
+
+      const reader =
+        new FileReader();
+
+      reader.onload =
+        function(event) {
+
+          const img =
+            new Image();
+
+          img.onload =
+            function() {
+
+              const MAX_SIZE = 1600;
+
+              let width =
+                img.width;
+
+              let height =
+                img.height;
 
 
-async function generatePattern() {
+              if (
+                width > MAX_SIZE ||
+                height > MAX_SIZE
+              ) {
 
-  const width =
-    parseInt(widthInput.value, 10);
+                if (
+                  width > height
+                ) {
 
-  const height =
-    parseInt(heightInput.value, 10);
+                  height =
+                    Math.round(
+                      height *
+                      MAX_SIZE /
+                      width
+                    );
 
-  const colors =
-    parseInt(colorsInput.value, 10);
+                  width =
+                    MAX_SIZE;
 
-  if (!width || !height || !colors) {
+                } else {
 
-    alert(
-      "Vérifie les dimensions et le nombre de couleurs."
-    );
+                  width =
+                    Math.round(
+                      width *
+                      MAX_SIZE /
+                      height
+                    );
 
-    return;
+                  height =
+                    MAX_SIZE;
+                }
+              }
 
-  }
 
-  setStatus(
-    generationStatus,
-    "🧶 L'IA génère ton patron...",
-    "loading"
-  );
+              const canvas =
+                document.createElement(
+                  "canvas"
+                );
 
-  generationStatus.classList.remove("hidden");
+              canvas.width =
+                width;
 
-  generateBtn.disabled = true;
+              canvas.height =
+                height;
 
-  try {
 
-    const formData =
-      new FormData();
+              const ctx =
+                canvas.getContext(
+                  "2d"
+                );
 
-    formData.append(
-      "image",
-      selectedFile
-    );
 
-    formData.append(
-      "action",
-      "generate"
-    );
+              ctx.drawImage(
+                img,
+                0,
+                0,
+                width,
+                height
+              );
 
-    formData.append(
-      "width",
-      width
-    );
 
-    formData.append(
-      "height",
-      height
-    );
+              resolve(
+                canvas.toDataURL(
+                  "image/jpeg",
+                  .82
+                )
+              );
 
-    formData.append(
-      "colors",
-      colors
-    );
+            };
 
-    if (analysisData) {
 
-      formData.append(
-        "analysis",
-        JSON.stringify(analysisData)
-      );
+          img.onerror =
+            function() {
+
+              reject(
+                new Error(
+                  "Impossible de lire l'image."
+                )
+              );
+
+            };
+
+
+          img.src =
+            event.target.result;
+        };
+
+
+      reader.onerror =
+        function() {
+
+          reject(
+            new Error(
+              "Impossible de charger l'image."
+            )
+          );
+
+        };
+
+
+      reader.readAsDataURL(file);
 
     }
+  );
+}
+
+
+imageInput.addEventListener(
+  "change",
+  async function() {
+
+    const file =
+      this.files[0];
+
+    if (!file) return;
+
+
+    try {
+
+      status.textContent =
+        "Préparation de l'image…";
+
+      imageData =
+        await compressImage(file);
+
+      preview.src =
+        imageData;
+
+      preview.style.display =
+        "block";
+
+      analysisCard.style.display =
+        "none";
+
+      patternCard.style.display =
+        "none";
+
+      symmetryCard.style.display =
+        "none";
+
+      regenerateCard.style.display =
+        "none";
+
+      status.textContent =
+        "Image prête. Lance l'analyse.";
+
+    } catch (error) {
+
+      imageData = null;
+
+      status.textContent =
+        "❌ " +
+        error.message;
+    }
+
+  }
+);
+
+
+/* =====================================================
+   ANALYSE
+   ===================================================== */
+
+analyzeButton.addEventListener(
+  "click",
+  async function() {
+
+    if (!imageData) {
+
+      status.textContent =
+        "⚠️ Choisis d'abord une image.";
+
+      return;
+    }
+
+
+    analyzeButton.disabled =
+      true;
+
+    analyzeButton.textContent =
+      "🧠 L'IA analyse ton image…";
+
+    status.textContent =
+      "Analyse du sujet, de la composition et des couleurs…";
+
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/analyze",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify({
+                action:
+                  "analyze",
+
+                image:
+                  imageData
+              })
+          }
+        );
+
+
+      const result =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          result.error ||
+          "Erreur du serveur."
+        );
+      }
+
+
+      analysisData =
+        result;
+
+
+      renderAnalysis();
+
+
+      analysisCard.style.display =
+        "block";
+
+      status.textContent =
+        "✅ Analyse terminée. L'IA a préparé plusieurs possibilités.";
+
+    } catch (error) {
+
+      console.error(error);
+
+      status.textContent =
+        "❌ " +
+        error.message;
+
+    } finally {
+
+      analyzeButton.disabled =
+        false;
+
+      analyzeButton.textContent =
+        "🧠 Analyser mon image";
+    }
+
+  }
+);
+
+
+/* =====================================================
+   AFFICHAGE ANALYSE
+   ===================================================== */
+
+function renderAnalysis() {
+
+  analysisText.innerHTML = `
+
+    <strong>
+      Sujet identifié :
+    </strong>
+
+    ${escapeHtml(
+      analysisData.description
+    )}
+
+    <br><br>
+
+    <strong>
+      Composition :
+    </strong>
+
+    ${escapeHtml(
+      analysisData.composition
+    )}
+
+    <br><br>
+
+    <strong>
+      Simplification :
+    </strong>
+
+    ${escapeHtml(
+      analysisData.simplification_strategy
+    )}
+
+  `;
+
+
+  dimensionOptions.innerHTML =
+    "";
+
+
+  analysisData
+    .recommended_dimensions
+    .forEach(
+      function(dim, index) {
+
+        const button =
+          document.createElement(
+            "button"
+          );
+
+        button.type =
+          "button";
+
+        button.className =
+          "dimensionButton";
+
+
+        button.textContent =
+          dim.width +
+          " × " +
+          dim.height;
+
+
+        button.addEventListener(
+          "click",
+          function() {
+
+            document
+              .querySelectorAll(
+                ".dimensionButton"
+              )
+              .forEach(
+                b =>
+                  b.classList.remove(
+                    "active"
+                  )
+              );
+
+
+            button.classList.add(
+              "active"
+            );
+
+
+            selectedWidth =
+              dim.width;
+
+            selectedHeight =
+              dim.height;
+
+          }
+        );
+
+
+        dimensionOptions
+          .appendChild(
+            button
+          );
+
+
+        if (
+          dim.width ===
+            analysisData.recommended_width &&
+          dim.height ===
+            analysisData.recommended_height
+        ) {
+
+          button.click();
+        }
+
+      }
+    );
+
+
+  colorRecommendation.innerHTML = `
+
+    <strong>
+      Recommandation IA :
+    </strong>
+
+    ${analysisData.recommended_colors}
+    couleurs
+
+    <br>
+
+    <span class="colorRange">
+      Tu pourras ensuite choisir entre
+      ${analysisData.min_colors}
+      et
+      ${analysisData.max_colors}
+      couleurs.
+    </span>
+
+  `;
+
+
+  regenerateDimensions.innerHTML =
+    "";
+
+
+  analysisData
+    .recommended_dimensions
+    .forEach(
+      function(dim) {
+
+        const option =
+          document.createElement(
+            "option"
+          );
+
+        option.value =
+          dim.width +
+          "x" +
+          dim.height;
+
+        option.textContent =
+          dim.width +
+          " × " +
+          dim.height;
+
+
+        if (
+          dim.width ===
+            selectedWidth &&
+          dim.height ===
+            selectedHeight
+        ) {
+
+          option.selected =
+            true;
+        }
+
+
+        regenerateDimensions
+          .appendChild(
+            option
+          );
+
+      }
+    );
+
+
+  regenerateColors.innerHTML =
+    "";
+
+
+  for (
+    let i =
+      analysisData.min_colors;
+    i <=
+      analysisData.max_colors;
+    i++
+  ) {
+
+    const option =
+      document.createElement(
+        "option"
+      );
+
+    option.value =
+      i;
+
+    option.textContent =
+      i +
+      (
+        i ===
+        analysisData.recommended_colors
+          ? " — recommandé"
+          : ""
+      );
+
+
+    if (
+      i ===
+      analysisData.recommended_colors
+    ) {
+
+      option.selected =
+        true;
+    }
+
+
+    regenerateColors
+      .appendChild(
+        option
+      );
+  }
+
+}
+
+
+/* =====================================================
+   PREMIER PATRON
+   ===================================================== */
+
+firstGenerateButton.addEventListener(
+  "click",
+  function() {
+
+    generatePattern(
+      selectedWidth,
+      selectedHeight,
+      analysisData.recommended_colors
+    );
+
+  }
+);
+
+
+/* =====================================================
+   GÉNÉRATION
+   ===================================================== */
+
+async function generatePattern(
+  width,
+  height,
+  colors
+) {
+
+  if (!width || !height) {
+
+    status.textContent =
+      "⚠️ Choisis une dimension.";
+
+    return;
+  }
+
+
+  firstGenerateButton.disabled =
+    true;
+
+  regenerateButton.disabled =
+    true;
+
+  status.textContent =
+    "🧶 L'IA construit le patron…";
+
+
+  try {
 
     const response =
       await fetch(
         "/api/analyze",
         {
           method: "POST",
-          body: formData
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body:
+            JSON.stringify({
+
+              action:
+                "generate",
+
+              image:
+                imageData,
+
+              width:
+                width,
+
+              height:
+                height,
+
+              colors:
+                colors,
+
+              analysis:
+                analysisData
+
+            })
         }
       );
 
-    const data =
+
+    const result =
       await response.json();
+
 
     if (!response.ok) {
 
       throw new Error(
-        data.error ||
-        "Impossible de générer le patron."
+        result.error ||
+        "Erreur du serveur."
       );
-
     }
 
-    if (
-      !Array.isArray(data.grid) ||
-      !data.grid.length
-    ) {
 
-      throw new Error(
-        "L'IA n'a pas renvoyé de grille valide."
+    originalGrid =
+      deepCopyGrid(
+        result.grid
       );
 
-    }
+    currentGrid =
+      deepCopyGrid(
+        result.grid
+      );
 
-    setPattern(
-      data.grid,
-      data.palette || [],
-      width,
-      height
+    currentPalette =
+      result.palette || [];
+
+
+    selectedPaletteIndex =
+      null;
+
+
+    createPalette();
+
+    createGrid();
+
+
+    zoomLevel =
+      1;
+
+    updateZoom();
+
+
+    patternCard.style.display =
+      "block";
+
+    symmetryCard.style.display =
+      "block";
+
+    regenerateCard.style.display =
+      "block";
+
+
+    setActiveSymmetry(
+      "none"
     );
 
-    patternSection.classList.remove("hidden");
 
-    colorsSection.classList.remove("hidden");
-
-    symmetrySection.classList.remove("hidden");
-
-    setStatus(
-      generationStatus,
-      "✅ Patron généré.",
-      "success"
-    );
-
-    patternSection.scrollIntoView({
-      behavior: "smooth"
+    patternCard.scrollIntoView({
+      behavior: "smooth",
+      block: "start"
     });
+
+
+    status.textContent =
+      "✅ Patron généré : " +
+      width +
+      " × " +
+      height +
+      " mailles.";
 
   } catch (error) {
 
     console.error(error);
 
-    setStatus(
-      generationStatus,
-      "❌ " + error.message,
-      "error"
-    );
+    status.textContent =
+      "❌ " +
+      error.message;
 
   } finally {
 
-    generateBtn.disabled = false;
+    firstGenerateButton.disabled =
+      false;
 
+    regenerateButton.disabled =
+      false;
   }
 
 }
 
 
-/* ============================================================
-   GRILLE
-   ============================================================ */
+/* =====================================================
+   RÉGÉNÉRATION
+   ===================================================== */
 
-function setPattern(
-  newGrid,
-  newPalette,
-  width,
-  height
-) {
+regenerateButton.addEventListener(
+  "click",
+  function() {
 
-  currentGrid =
-    newGrid.map(row => [...row]);
-
-  originalGrid =
-    newGrid.map(row => [...row]);
-
-  gridHeight =
-    currentGrid.length;
-
-  gridWidth =
-    currentGrid[0]?.length || width;
-
-  palette =
-    normalizePalette(
-      newPalette,
-      currentGrid
-    );
-
-  zoom = 1;
-
-  renderGrid();
-
-  renderPalette();
-
-  updateZoom();
-
-  patternInfo.innerHTML =
-    `<span>📐 ${gridWidth} × ${gridHeight} mailles</span>
-     <span>🎨 ${palette.length} couleurs</span>`;
-
-}
+    const dimensions =
+      regenerateDimensions
+        .value
+        .split("x")
+        .map(Number);
 
 
-/* ============================================================
-   PALETTE
-   ============================================================ */
+    const width =
+      dimensions[0];
 
-function normalizePalette(
-  colors,
-  gridData
-) {
+    const height =
+      dimensions[1];
 
-  const result = [];
-
-  if (Array.isArray(colors)) {
-
-    colors.forEach(color => {
-
-      if (typeof color === "string") {
-
-        result.push(normalizeHex(color));
-
-      } else if (
-        color &&
-        typeof color.hex === "string"
-      ) {
-
-        result.push(
-          normalizeHex(color.hex)
-        );
-
-      }
-
-    });
-
-  }
-
-  const usedIndexes =
-    new Set(
-      gridData.flat()
-    );
-
-  const maxIndex =
-    Math.max(
-      -1,
-      ...usedIndexes
-    );
-
-  while (
-    result.length <= maxIndex &&
-    result.length < 20
-  ) {
-
-    result.push(
-      QUICK_COLORS[
-        result.length %
-        QUICK_COLORS.length
-      ]
-    );
-
-  }
-
-  if (!result.length) {
-
-    result.push(
-      "#000000",
-      "#FFFFFF"
-    );
-
-  }
-
-  return result;
-
-}
-
-
-/* ============================================================
-   RENDU GRILLE
-   ============================================================ */
-
-function renderGrid() {
-
-  grid.innerHTML = "";
-
-  if (!currentGrid.length) return;
-
-  grid.style.gridTemplateColumns =
-    `repeat(${gridWidth}, 16px)`;
-
-  currentGrid.forEach(
-    (row, rowIndex) => {
-
-      row.forEach(
-        (colorIndex, columnIndex) => {
-
-          const cell =
-            document.createElement("div");
-
-          cell.className = "cell";
-
-          cell.style.background =
-            palette[colorIndex] ||
-            "#FFFFFF";
-
-          cell.dataset.row =
-            rowIndex;
-
-          cell.dataset.col =
-            columnIndex;
-
-          cell.addEventListener(
-            "click",
-            () => {
-
-              if (
-                selectedColorIndex >=
-                palette.length
-              ) return;
-
-              currentGrid[rowIndex][columnIndex] =
-                selectedColorIndex;
-
-              cell.style.background =
-                palette[selectedColorIndex];
-
-            }
-          );
-
-          grid.appendChild(cell);
-
-        }
+    const colors =
+      Number(
+        regenerateColors.value
       );
 
-    }
-  );
 
-}
-
-
-/* ============================================================
-   PALETTE UI
-   ============================================================ */
-
-function renderPalette() {
-
-  paletteElement.innerHTML = "";
-
-  palette.forEach(
-    (color, index) => {
-
-      const item =
-        document.createElement("button");
-
-      item.className =
-        "palette-item" +
-        (
-          index === selectedColorIndex
-            ? " selected"
-            : ""
-        );
-
-      item.style.background =
-        color;
-
-      item.innerHTML =
-        `<span>${color}</span>`;
-
-      item.addEventListener(
-        "click",
-        () => {
-
-          selectedColorIndex =
-            index;
-
-          colorPicker.value =
-            color;
-
-          hexInput.value =
-            color;
-
-          renderPalette();
-
-        }
-      );
-
-      paletteElement.appendChild(item);
-
-    }
-  );
-
-}
-
-
-/* ============================================================
-   MODIFICATION COULEUR
-   ============================================================ */
-
-document
-  .getElementById("applyColor")
-  .addEventListener(
-    "click",
-    () => {
-
-      const color =
-        normalizeHex(
-          hexInput.value
-        );
-
-      if (!color) {
-
-        alert(
-          "Entre une couleur HEX valide."
-        );
-
-        return;
-
-      }
-
-      replacePaletteColor(
-        selectedColorIndex,
-        color
-      );
-
-    }
-  );
-
-
-colorPicker.addEventListener(
-  "input",
-  () => {
-
-    const color =
-      normalizeHex(
-        colorPicker.value
-      );
-
-    hexInput.value =
-      color;
+    generatePattern(
+      width,
+      height,
+      colors
+    );
 
   }
 );
 
 
-function setSelectedColor(color) {
+/* =====================================================
+   GRILLE
+   ===================================================== */
 
-  const normalized =
-    normalizeHex(color);
+function createGrid() {
 
-  colorPicker.value =
-    normalized;
+  pattern.innerHTML =
+    "";
 
-  hexInput.value =
-    normalized;
 
   if (
-    selectedColorIndex >=
-    palette.length
+    !currentGrid ||
+    !currentGrid.length
   ) {
 
-    selectedColorIndex = 0;
-
+    return;
   }
 
-  replacePaletteColor(
-    selectedColorIndex,
-    normalized
+
+  const columns =
+    currentGrid[0].length;
+
+
+  pattern.style.gridTemplateColumns =
+    `repeat(${columns}, ${BASE_CELL_SIZE}px)`;
+
+
+  currentGrid.forEach(
+    function(row) {
+
+      row.forEach(
+        function(colorIndex) {
+
+          const cell =
+            document.createElement(
+              "div"
+            );
+
+
+          cell.className =
+            "cell";
+
+
+          cell.dataset.colorIndex =
+            colorIndex;
+
+
+          cell.style.background =
+            currentPalette[
+              colorIndex
+            ] ||
+            "#ffffff";
+
+
+          cell.style.width =
+            BASE_CELL_SIZE +
+            "px";
+
+          cell.style.height =
+            BASE_CELL_SIZE +
+            "px";
+
+
+          cell.addEventListener(
+            "click",
+            function() {
+
+              if (
+                selectedPaletteIndex ===
+                null
+              ) {
+                return;
+              }
+
+
+              cell.dataset.colorIndex =
+                selectedPaletteIndex;
+
+
+              cell.style.background =
+                currentPalette[
+                  selectedPaletteIndex
+                ];
+
+            }
+          );
+
+
+          pattern.appendChild(
+            cell
+          );
+
+        }
+      );
+
+    }
+  );
+
+
+  updateZoom();
+}
+
+
+/* =====================================================
+   PALETTE
+   ===================================================== */
+
+function createPalette() {
+
+  palette.innerHTML =
+    "";
+
+
+  currentPalette.forEach(
+    function(color, index) {
+
+      const item =
+        document.createElement(
+          "div"
+        );
+
+
+      item.className =
+        "paletteItem";
+
+
+      const button =
+        document.createElement(
+          "button"
+        );
+
+
+      button.type =
+        "button";
+
+      button.className =
+        "paletteColor";
+
+      button.style.background =
+        color;
+
+
+      const number =
+        document.createElement(
+          "div"
+        );
+
+
+      number.className =
+        "paletteNumber";
+
+      number.textContent =
+        "Couleur " +
+        (index + 1);
+
+
+      item.appendChild(
+        button
+      );
+
+      item.appendChild(
+        number
+      );
+
+
+      button.addEventListener(
+        "click",
+        function() {
+
+          openColorEditor(
+            index
+          );
+
+        }
+      );
+
+
+      button.addEventListener(
+        "dblclick",
+        function(event) {
+
+          event.preventDefault();
+
+          selectPaletteColor(
+            index
+          );
+
+        }
+      );
+
+
+      palette.appendChild(
+        item
+      );
+
+    }
   );
 
 }
 
 
-function replacePaletteColor(
-  index,
-  newColor
+/* =====================================================
+   SÉLECTION COULEUR
+   ===================================================== */
+
+function selectPaletteColor(
+  index
 ) {
 
-  if (
-    index < 0 ||
-    index >= palette.length
-  ) return;
+  selectedPaletteIndex =
+    index;
 
-  palette[index] =
-    newColor;
 
-  renderGrid();
+  document
+    .querySelectorAll(
+      ".paletteItem"
+    )
+    .forEach(
+      function(item, i) {
 
-  renderPalette();
+        item.classList.toggle(
+          "selected",
+          i === index
+        );
+
+      }
+    );
+
+
+  status.textContent =
+    "🎨 Couleur " +
+    (index + 1) +
+    " sélectionnée.";
 
 }
 
 
-/* ============================================================
-   SYMETRIE
-   ============================================================ */
+/* =====================================================
+   ÉDITEUR
+   ===================================================== */
 
-let selectedSymmetry = "none";
+function openColorEditor(
+  index
+) {
 
-document
-  .querySelectorAll(".symmetry-btn")
-  .forEach(button => {
+  editingPaletteIndex =
+    index;
+
+  editingColor =
+    currentPalette[index] ||
+    "#000000";
+
+
+  setEditingColor(
+    editingColor
+  );
+
+
+  colorEditor.style.display =
+    "block";
+
+}
+
+
+function setEditingColor(
+  color
+) {
+
+  editingColor =
+    color.toUpperCase();
+
+
+  currentColorBox.style.background =
+    editingColor;
+
+  currentColorHex.textContent =
+    editingColor;
+
+
+  updateWheelCursor(
+    editingColor
+  );
+
+}
+
+
+/* =====================================================
+   COULEUR : HEX / RGB / HSV
+   ===================================================== */
+
+function hexToRgb(hex) {
+
+  hex =
+    hex.replace(
+      "#",
+      ""
+    );
+
+
+  return {
+
+    r:
+      parseInt(
+        hex.substring(0,2),
+        16
+      ),
+
+    g:
+      parseInt(
+        hex.substring(2,4),
+        16
+      ),
+
+    b:
+      parseInt(
+        hex.substring(4,6),
+        16
+      )
+
+  };
+}
+
+
+function rgbToHex(
+  r,
+  g,
+  b
+) {
+
+  return (
+    "#" +
+    [r,g,b]
+      .map(
+        function(v) {
+
+          return v
+            .toString(16)
+            .padStart(
+              2,
+              "0"
+            );
+
+        }
+      )
+      .join("")
+  ).toUpperCase();
+
+}
+
+
+function rgbToHsv(
+  r,
+  g,
+  b
+) {
+
+  r /= 255;
+  g /= 255;
+  b /= 255;
+
+
+  const max =
+    Math.max(
+      r,g,b
+    );
+
+  const min =
+    Math.min(
+      r,g,b
+    );
+
+  const d =
+    max - min;
+
+
+  let h = 0;
+
+  const s =
+    max === 0
+      ? 0
+      : d / max;
+
+  const v =
+    max;
+
+
+  if (d !== 0) {
+
+    switch(max) {
+
+      case r:
+        h =
+          ((g-b)/d)%6;
+        break;
+
+      case g:
+        h =
+          (b-r)/d+2;
+        break;
+
+      case b:
+        h =
+          (r-g)/d+4;
+        break;
+
+    }
+
+
+    h /= 6;
+
+
+    if (h < 0) {
+      h += 1;
+    }
+
+  }
+
+
+  return {
+    h: h * 360,
+    s: s * 100,
+    v: v * 100
+  };
+
+}
+
+
+function hsvToRgb(
+  h,
+  s,
+  v
+) {
+
+  s /= 100;
+  v /= 100;
+
+
+  const c =
+    v * s;
+
+  const x =
+    c *
+    (
+      1 -
+      Math.abs(
+        (h / 60) % 2 - 1
+      )
+    );
+
+  const m =
+    v - c;
+
+
+  let r = 0;
+  let g = 0;
+  let b = 0;
+
+
+  if (h < 60) {
+    r = c;
+    g = x;
+
+  } else if (h < 120) {
+    r = x;
+    g = c;
+
+  } else if (h < 180) {
+    g = c;
+    b = x;
+
+  } else if (h < 240) {
+    g = x;
+    b = c;
+
+  } else if (h < 300) {
+    r = x;
+    b = c;
+
+  } else {
+    r = c;
+    b = x;
+  }
+
+
+  return {
+
+    r:
+      Math.round(
+        (r+m)*255
+      ),
+
+    g:
+      Math.round(
+        (g+m)*255
+      ),
+
+    b:
+      Math.round(
+        (b+m)*255
+      )
+
+  };
+
+}
+
+
+/* =====================================================
+   ROUE
+   ===================================================== */
+
+function updateWheelCursor(
+  color
+) {
+
+  const rgb =
+    hexToRgb(
+      color
+    );
+
+
+  const hsv =
+    rgbToHsv(
+      rgb.r,
+      rgb.g,
+      rgb.b
+    );
+
+
+  const rect =
+    colorWheel
+      .getBoundingClientRect();
+
+
+  const radius =
+    rect.width / 2;
+
+
+  const angle =
+    hsv.h *
+    Math.PI /
+    180;
+
+
+  const distance =
+    radius *
+    (hsv.s / 100) *
+    .82;
+
+
+  const center =
+    radius;
+
+
+  const x =
+    center +
+    Math.cos(angle) *
+    distance;
+
+
+  const y =
+    center +
+    Math.sin(angle) *
+    distance;
+
+
+  wheelCursor.style.left =
+    x + "px";
+
+  wheelCursor.style.top =
+    y + "px";
+
+  wheelCursor.style.background =
+    color;
+
+}
+
+
+function selectFromWheel(
+  event
+) {
+
+  const rect =
+    colorWheel
+      .getBoundingClientRect();
+
+
+  const x =
+    event.clientX -
+    rect.left;
+
+
+  const y =
+    event.clientY -
+    rect.top;
+
+
+  const centerX =
+    rect.width / 2;
+
+  const centerY =
+    rect.height / 2;
+
+
+  const dx =
+    x - centerX;
+
+  const dy =
+    y - centerY;
+
+
+  const distance =
+    Math.sqrt(
+      dx*dx +
+      dy*dy
+    );
+
+
+  const radius =
+    rect.width / 2;
+
+
+  const limitedDistance =
+    Math.min(
+      distance,
+      radius * .82
+    );
+
+
+  let hue =
+    Math.atan2(
+      dy,
+      dx
+    ) *
+    180 /
+    Math.PI;
+
+
+  if (hue < 0) {
+    hue += 360;
+  }
+
+
+  const saturation =
+    Math.min(
+      100,
+      limitedDistance /
+      (radius * .82) *
+      100
+    );
+
+
+  const oldRgb =
+    hexToRgb(
+      editingColor
+    );
+
+
+  const oldHsv =
+    rgbToHsv(
+      oldRgb.r,
+      oldRgb.g,
+      oldRgb.b
+    );
+
+
+  const rgb =
+    hsvToRgb(
+      hue,
+      saturation,
+      oldHsv.v
+    );
+
+
+  setEditingColor(
+    rgbToHex(
+      rgb.r,
+      rgb.g,
+      rgb.b
+    )
+  );
+
+}
+
+
+colorWheel.addEventListener(
+  "pointerdown",
+  function(event) {
+
+    colorWheel.setPointerCapture(
+      event.pointerId
+    );
+
+    selectFromWheel(
+      event
+    );
+
+  }
+);
+
+
+colorWheel.addEventListener(
+  "pointermove",
+  function(event) {
+
+    if (event.buttons) {
+
+      selectFromWheel(
+        event
+      );
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   APPLIQUER COULEUR
+   ===================================================== */
+
+applyColor.addEventListener(
+  "click",
+  function() {
+
+    if (
+      editingPaletteIndex ===
+      null
+    ) {
+      return;
+    }
+
+
+    currentPalette[
+      editingPaletteIndex
+    ] =
+      editingColor;
+
+
+    createPalette();
+
+
+    colorEditor.style.display =
+      "none";
+
+
+    createGrid();
+
+
+    status.textContent =
+      "🎨 Couleur modifiée.";
+
+  }
+);
+
+
+cancelColor.addEventListener(
+  "click",
+  function() {
+
+    colorEditor.style.display =
+      "none";
+
+    editingPaletteIndex =
+      null;
+
+  }
+);
+
+
+/* =====================================================
+   SYMÉTRIE
+   ===================================================== */
+
+const symmetryButtons =
+  document.querySelectorAll(
+    ".symmetryButton"
+  );
+
+const resetSymmetry =
+  document.getElementById(
+    "resetSymmetry"
+  );
+
+
+function deepCopyGrid(
+  grid
+) {
+
+  return grid.map(
+    row => [...row]
+  );
+
+}
+
+
+function applySymmetry(
+  mode
+) {
+
+  if (!originalGrid) {
+    return;
+  }
+
+
+  const H =
+    originalGrid.length;
+
+  const W =
+    originalGrid[0].length;
+
+
+  const grid =
+    deepCopyGrid(
+      originalGrid
+    );
+
+
+  if (mode === "left") {
+
+    for (
+      let y=0;
+      y<H;
+      y++
+    ) {
+
+      for (
+        let x=0;
+        x<Math.floor(W/2);
+        x++
+      ) {
+
+        grid[y][
+          W-1-x
+        ] =
+          grid[y][x];
+
+      }
+
+    }
+
+  }
+
+
+  if (mode === "right") {
+
+    for (
+      let y=0;
+      y<H;
+      y++
+    ) {
+
+      for (
+        let x=0;
+        x<Math.floor(W/2);
+        x++
+      ) {
+
+        grid[y][x] =
+          grid[y][
+            W-1-x
+          ];
+
+      }
+
+    }
+
+  }
+
+
+  if (mode === "top") {
+
+    for (
+      let y=0;
+      y<Math.floor(H/2);
+      y++
+    ) {
+
+      for (
+        let x=0;
+        x<W;
+        x++
+      ) {
+
+        grid[H-1-y][x] =
+          grid[y][x];
+
+      }
+
+    }
+
+  }
+
+
+  if (mode === "bottom") {
+
+    for (
+      let y=0;
+      y<Math.floor(H/2);
+      y++
+    ) {
+
+      for (
+        let x=0;
+        x<W;
+        x++
+      ) {
+
+        grid[y][x] =
+          grid[H-1-y][x];
+
+      }
+
+    }
+
+  }
+
+
+  if (mode === "four") {
+
+    const halfH =
+      Math.ceil(H/2);
+
+    const halfW =
+      Math.ceil(W/2);
+
+
+    for (
+      let y=0;
+      y<halfH;
+      y++
+    ) {
+
+      for (
+        let x=0;
+        x<halfW;
+        x++
+      ) {
+
+        const value =
+          grid[y][x];
+
+
+        grid[y][W-1-x] =
+          value;
+
+        grid[H-1-y][x] =
+          value;
+
+        grid[H-1-y][W-1-x] =
+          value;
+
+      }
+
+    }
+
+  }
+
+
+  currentGrid =
+    grid;
+
+
+  createGrid();
+
+}
+
+
+function setActiveSymmetry(
+  mode
+) {
+
+  symmetryButtons.forEach(
+    function(button) {
+
+      button.classList.toggle(
+        "active",
+        button.dataset.mode ===
+          mode
+      );
+
+    }
+  );
+
+
+  applySymmetry(
+    mode
+  );
+
+}
+
+
+symmetryButtons.forEach(
+  function(button) {
 
     button.addEventListener(
       "click",
-      () => {
+      function() {
 
-        document
-          .querySelectorAll(".symmetry-btn")
-          .forEach(btn =>
-            btn.classList.remove("active")
-          );
-
-        button.classList.add("active");
-
-        selectedSymmetry =
-          button.dataset.symmetry;
+        setActiveSymmetry(
+          button.dataset.mode
+        );
 
       }
     );
 
-  });
+  }
+);
 
 
-document
-  .getElementById("applySymmetry")
-  .addEventListener(
-    "click",
-    applySymmetry
-  );
+resetSymmetry.addEventListener(
+  "click",
+  function() {
 
+    currentGrid =
+      deepCopyGrid(
+        originalGrid
+      );
 
-function applySymmetry() {
+    createGrid();
 
-  if (!currentGrid.length) return;
+    setActiveSymmetry(
+      "none"
+    );
 
-  if (
-    !confirm(
-      "Appliquer cette symétrie au patron actuel ?"
-    )
-  ) return;
-
-  if (
-    selectedSymmetry === "horizontal"
-  ) {
-
-    for (
-      let r = 0;
-      r < gridHeight;
-      r++
-    ) {
-
-      for (
-        let c = 0;
-        c < Math.floor(gridWidth / 2);
-        c++
-      ) {
-
-        currentGrid[r][
-          gridWidth - 1 - c
-        ] =
-          currentGrid[r][c];
-
-      }
-
-    }
+    status.textContent =
+      "↩️ Patron original restauré.";
 
   }
-
-  else if (
-    selectedSymmetry === "vertical"
-  ) {
-
-    for (
-      let r = 0;
-      r < Math.floor(gridHeight / 2);
-      r++
-    ) {
-
-      const mirror =
-        gridHeight - 1 - r;
-
-      currentGrid[mirror] =
-        [...currentGrid[r]];
-
-    }
-
-  }
-
-  else if (
-    selectedSymmetry === "four"
-  ) {
-
-    for (
-      let r = 0;
-      r < gridHeight;
-      r++
-    ) {
-
-      for (
-        let c = 0;
-        c < gridWidth;
-        c++
-      ) {
-
-        const mirrorColumn =
-          gridWidth - 1 - c;
-
-        const mirrorRow =
-          gridHeight - 1 - r;
-
-        const value =
-          currentGrid[r][c];
-
-        currentGrid[r][mirrorColumn] =
-          value;
-
-        currentGrid[mirrorRow][c] =
-          value;
-
-        currentGrid[mirrorRow][mirrorColumn] =
-          value;
-
-      }
-
-    }
-
-  }
-
-  renderGrid();
-
-}
+);
 
 
-/* ============================================================
-   ANNULER / REVENIR AU PATRON INITIAL
-   ============================================================ */
-
-document
-  .getElementById("undoSymmetry")
-  .addEventListener(
-    "click",
-    () => {
-
-      if (!originalGrid) return;
-
-      currentGrid =
-        originalGrid.map(
-          row => [...row]
-        );
-
-      renderGrid();
-
-    }
-  );
-
-
-document
-  .getElementById("resetPatternBtn")
-  .addEventListener(
-    "click",
-    () => {
-
-      if (!originalGrid) return;
-
-      currentGrid =
-        originalGrid.map(
-          row => [...row]
-        );
-
-      renderGrid();
-
-    }
-  );
-
-
-/* ============================================================
+/* =====================================================
    ZOOM
-   ============================================================ */
-
-document
-  .getElementById("zoomIn")
-  .addEventListener(
-    "click",
-    () => {
-
-      zoom =
-        Math.min(
-          3,
-          zoom + 0.1
-        );
-
-      updateZoom();
-
-    }
-  );
-
-
-document
-  .getElementById("zoomOut")
-  .addEventListener(
-    "click",
-    () => {
-
-      zoom =
-        Math.max(
-          0.1,
-          zoom - 0.1
-        );
-
-      updateZoom();
-
-    }
-  );
-
-
-document
-  .getElementById("resetZoom")
-  .addEventListener(
-    "click",
-    () => {
-
-      zoom = 1;
-
-      updateZoom();
-
-    }
-  );
-
-
-document
-  .getElementById("fitScreen")
-  .addEventListener(
-    "click",
-    fitGridToScreen
-  );
-
+   ===================================================== */
 
 function updateZoom() {
 
-  grid.style.transform =
-    `scale(${zoom})`;
-
-  zoomValue.textContent =
-    `${Math.round(zoom * 100)}%`;
-
-}
-
-
-function fitGridToScreen() {
-
-  if (!gridWidth || !gridHeight)
+  if (
+    !currentGrid ||
+    !currentGrid.length
+  ) {
     return;
+  }
 
-  const availableWidth =
-    gridWrapper.clientWidth - 20;
 
-  const availableHeight =
-    gridWrapper.clientHeight - 20;
-
-  const scaleX =
-    availableWidth /
-    (gridWidth * 16);
-
-  const scaleY =
-    availableHeight /
-    (gridHeight * 16);
-
-  zoom =
-    Math.min(
-      1,
-      scaleX,
-      scaleY
-    );
-
-  zoom =
+  const cellSize =
     Math.max(
-      0.1,
-      zoom
+      2,
+      Math.round(
+        BASE_CELL_SIZE *
+        zoomLevel
+      )
     );
 
-  updateZoom();
+
+  const cells =
+    pattern.querySelectorAll(
+      ".cell"
+    );
+
+
+  cells.forEach(
+    function(cell) {
+
+      cell.style.width =
+        cellSize + "px";
+
+      cell.style.height =
+        cellSize + "px";
+
+    }
+  );
+
+
+  pattern.style.gridTemplateColumns =
+    `repeat(
+      ${currentGrid[0].length},
+      ${cellSize}px
+    )`;
+
+
+  const percent =
+    Math.round(
+      zoomLevel * 100
+    );
+
+
+  zoomLabel.textContent =
+    percent + " %";
+
+  zoomReset.textContent =
+    percent + " %";
 
 }
 
 
-/* ============================================================
-   REGENERATION
-   ============================================================ */
+zoomIn.addEventListener(
+  "click",
+  function() {
 
-function regenerateWithCurrentSettings() {
+    zoomLevel =
+      Math.min(
+        MAX_ZOOM,
+        zoomLevel +
+        ZOOM_STEP
+      );
 
-  generatePattern();
+    updateZoom();
 
-}
+  }
+);
 
 
-/* ============================================================
-   OUTILS
-   ============================================================ */
+zoomOut.addEventListener(
+  "click",
+  function() {
 
-function setStatus(
-  element,
-  message,
-  type
+    zoomLevel =
+      Math.max(
+        MIN_ZOOM,
+        zoomLevel -
+        ZOOM_STEP
+      );
+
+    updateZoom();
+
+  }
+);
+
+
+zoomReset.addEventListener(
+  "click",
+  function() {
+
+    zoomLevel =
+      1;
+
+    updateZoom();
+
+  }
+);
+
+
+fitScreen.addEventListener(
+  "click",
+  function() {
+
+    if (
+      !currentGrid ||
+      !currentGrid.length
+    ) {
+      return;
+    }
+
+
+    const columns =
+      currentGrid[0].length;
+
+
+    const availableWidth =
+      patternContainer.clientWidth -
+      24;
+
+
+    const desiredCellSize =
+      availableWidth /
+      columns;
+
+
+    zoomLevel =
+      desiredCellSize /
+      BASE_CELL_SIZE;
+
+
+    zoomLevel =
+      Math.max(
+        MIN_ZOOM,
+        Math.min(
+          MAX_ZOOM,
+          zoomLevel
+        )
+      );
+
+
+    updateZoom();
+
+  }
+);
+
+
+/* =====================================================
+   UTILITAIRE HTML
+   ===================================================== */
+
+function escapeHtml(
+  value
 ) {
 
-  element.textContent =
-    message;
-
-  element.className =
-    "status " + type;
-
-}
-
-
-function normalizeHex(value) {
-
-  if (
-    typeof value !== "string"
-  ) return null;
-
-  let color =
-    value.trim();
-
-  if (
-    /^#[0-9a-fA-F]{6}$/.test(color)
-  ) {
-
-    return color.toUpperCase();
-
-  }
-
-  if (
-    /^#[0-9a-fA-F]{3}$/.test(color)
-  ) {
-
-    return (
-      "#" +
-      color[1] + color[1] +
-      color[2] + color[2] +
-      color[3] + color[3]
-    ).toUpperCase();
-
-  }
-
-  return null;
-
-}
-
-
-function escapeHtml(value) {
-
-  return String(value)
+  return String(
+    value || ""
+  )
     .replace(
       /&/g,
       "&amp;"
@@ -2183,14 +3022,8 @@ function escapeHtml(value) {
 
 }
 
-
-/* ============================================================
-   INITIALISATION
-   ============================================================ */
-
-renderQuickColors();
-
 </script>
 
 </body>
+
 </html>
