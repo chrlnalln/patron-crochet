@@ -1,74 +1,21 @@
 export default async function handler(req, res) {
-
-  // ============================================================
-  // V4.4 — PATRON CROCHET AI
-  // Compréhension du sujet + intention utilisateur
-  // ============================================================
-
-  // ============================================================
-  // 1. MÉTHODE HTTP
-  // ============================================================
-
   if (req.method !== "POST") {
     return res.status(405).json({
-      error: "Méthode non autorisée"
+      error: "Méthode non autorisée."
     });
   }
 
   try {
+    const form = await req.formData();
 
-    // ============================================================
-    // 2. RÉCUPÉRATION DES DONNÉES
-    // ============================================================
-
-    const {
-      image,
-      width,
-      height,
-      colors,
-      description: userDescription
-    } = req.body || {};
-
-    const W = Number(width);
-    const H = Number(height);
-    const C = Number(colors);
-
-    const descriptionUtilisateur =
-      typeof userDescription === "string"
-        ? userDescription.trim().slice(0, 1000)
-        : "";
-
-    // ============================================================
-    // 3. VÉRIFICATIONS
-    // ============================================================
+    const action = form.get("action");
+    const image = form.get("image");
 
     if (!image) {
       return res.status(400).json({
-        error: "Aucune image reçue."
+        error: "Aucune image n'a été fournie."
       });
     }
-
-    if (!Number.isInteger(W) || W < 1 || W > 120) {
-      return res.status(400).json({
-        error: "Largeur invalide."
-      });
-    }
-
-    if (!Number.isInteger(H) || H < 1 || H > 120) {
-      return res.status(400).json({
-        error: "Hauteur invalide."
-      });
-    }
-
-    if (!Number.isInteger(C) || C < 2 || C > 12) {
-      return res.status(400).json({
-        error: "Nombre de couleurs invalide."
-      });
-    }
-
-    // ============================================================
-    // 4. CLÉ API
-    // ============================================================
 
     const apiKey = process.env.OPENAI_API_KEY;
 
@@ -78,365 +25,271 @@ export default async function handler(req, res) {
       });
     }
 
-    // ============================================================
-    // 5. DESCRIPTION UTILISATEUR
-    // ============================================================
+    const imageBuffer = Buffer.from(
+      await image.arrayBuffer()
+    );
 
-    const intention = descriptionUtilisateur
-      ? `
-============================================================
-INTENTION DE LA PERSONNE
-============================================================
+    const mimeType =
+      image.type || "image/jpeg";
 
-La personne a décrit ce qu'elle souhaite retrouver dans
-son patron :
+    const base64Image =
+      imageBuffer.toString("base64");
 
-"${descriptionUtilisateur}"
+    const imageDataUrl =
+      `data:${mimeType};base64,${base64Image}`;
 
-Cette information est TRÈS IMPORTANTE.
+    /* =========================================================
+       ÉTAPE 1 : ANALYSE DE L'IMAGE
+       ========================================================= */
 
-La description de la personne doit être utilisée pour
-déterminer ce qui constitue le sujet principal du patron.
+    if (action === "analyze") {
 
-Si la photo contient beaucoup d'éléments secondaires
-(arrière-plan, meubles, décorations, personnes, objets,
-etc.), ne leur donne pas la priorité si la personne ne
-demande pas de les représenter.
+      const prompt = `
+Tu es un expert en conception de patrons de tapestry crochet.
 
-Tu dois comprendre la différence entre :
+Tu dois analyser l'image fournie AVANT de penser à une grille de crochet.
 
-- ce qui est présent dans la photographie ;
-- ce que la personne souhaite réellement transformer
-  en motif de tapisserie au crochet.
+Ton objectif est de déterminer comment transformer cette image en un motif de tapestry crochet reconnaissable, esthétique et réalisable.
 
-La description utilisateur ne doit cependant pas te faire
-inventer des éléments absents de la photographie.
-
-Tu dois donc CROISER :
-1. ce que tu vois réellement dans l'image ;
-2. ce que la personne demande de représenter.
-
-Le résultat doit correspondre aux deux.
-`
-      : `
-============================================================
-AUCUNE DESCRIPTION UTILISATEUR
-============================================================
-
-La personne n'a fourni aucune description.
-
-Dans ce cas, analyse toi-même l'image et identifie le sujet
-principal le plus évident.
-
-Ne te laisse pas distraire par les éléments secondaires
-de l'arrière-plan.
-`;
-
-    // ============================================================
-    // 6. PROMPT PRINCIPAL
-    // ============================================================
-
-    const prompt = `
-Tu es le moteur intelligent d'une application qui transforme
-une image en patron de TAPISSERIE AU CROCHET.
-
-Ton objectif n'est PAS de pixeliser simplement une photographie.
-
-Ton objectif est de comprendre ce que la personne veut
-représenter et de REDESSINER ce sujet sous forme d'une grille
-de mailles de crochet.
-
-${intention}
-
-============================================================
-PRINCIPE ABSOLU
-============================================================
-
-Le patron final doit être reconnaissable par une personne
-qui regarde le patron sans avoir besoin de voir la photographie.
-
-La RECONNAISSANCE DU SUJET PRINCIPAL est prioritaire sur :
-
-- les détails photographiques ;
-- les textures ;
-- les ombres ;
-- les petits objets secondaires ;
-- la fidélité pixel par pixel.
-
-============================================================
-ANALYSE DE L'IMAGE
-============================================================
-
-Analyse d'abord attentivement la photographie.
-
-Identifie notamment :
+Analyse notamment :
 
 - le sujet principal ;
-- sa silhouette ;
-- sa forme générale ;
-- ses contours ;
-- ses proportions ;
-- son orientation ;
-- les parties caractéristiques ;
-- les éléments qui permettent de l'identifier ;
-- les espaces négatifs importants ;
-- les couleurs essentielles ;
-- les éventuels textes ;
-- les éventuels symboles ;
-- les éléments secondaires ;
-- l'arrière-plan.
+- les éléments secondaires importants ;
+- la composition ;
+- le cadrage ;
+- le rapport largeur / hauteur ;
+- les formes importantes ;
+- les détails qui doivent absolument être conservés ;
+- les détails qui peuvent être supprimés ;
+- les zones de contraste ;
+- les couleurs réellement importantes ;
+- le niveau de simplification nécessaire.
 
-Tu dois déterminer ce qui doit absolument être conservé
-dans une représentation très simplifiée.
+Le patron doit privilégier la reconnaissance du sujet plutôt que la reproduction exacte de chaque détail de la photo.
 
-============================================================
-HIÉRARCHISATION
-============================================================
+Une photo complexe doit donc être simplifiée intelligemment.
 
-Classe mentalement les éléments ainsi :
+Détermine également :
 
-PRIORITÉ 1 :
-Le sujet demandé par l'utilisateur.
+1. plusieurs dimensions de grille adaptées à la composition ;
+2. une dimension recommandée ;
+3. un nombre de couleurs recommandé ;
+4. un nombre minimum raisonnable de couleurs ;
+5. un nombre maximum raisonnable de couleurs.
 
-PRIORITÉ 2 :
-Les caractéristiques permettant de reconnaître ce sujet.
+IMPORTANT :
 
-PRIORITÉ 3 :
-Les couleurs et détails importants.
+- Ne propose pas de dimensions absurdes.
+- Ne dépasse jamais 120 mailles sur un côté.
+- Pour une image carrée, privilégie des formats carrés.
+- Pour une image portrait, privilégie des formats portrait.
+- Pour une image paysage, privilégie des formats paysage.
+- Les dimensions doivent rester raisonnables pour un ouvrage de crochet.
+- Le nombre de couleurs doit être compris entre 2 et 20.
+- Le nombre recommandé doit être suffisant pour reconnaître l'image mais pas inutilement élevé.
 
-PRIORITÉ 4 :
-Les éléments secondaires réellement utiles.
-
-PRIORITÉ 5 :
-Les détails photographiques non essentiels.
-
-Si la résolution est insuffisante pour tout conserver,
-sacrifie les détails secondaires AVANT les caractéristiques
-du sujet principal.
-
-============================================================
-SIMPLIFICATION POUR LE CROCHET
-============================================================
-
-Tu as le droit de :
-
-- simplifier les formes ;
-- épaissir légèrement les contours ;
-- simplifier les courbes ;
-- supprimer les petits détails ;
-- renforcer les contrastes ;
-- préserver artificiellement les espaces négatifs ;
-- ajuster légèrement les proportions ;
-- simplifier les textures ;
-- rendre certaines parties légèrement plus grandes
-  si cela permet de conserver la reconnaissance du motif.
-
-Tu ne dois PAS :
-
-- faire une simple moyenne de pixels ;
-- produire une forme abstraite ;
-- transformer tout le sujet en un gros pâté de couleur ;
-- donner trop d'importance à l'arrière-plan ;
-- supprimer une partie essentielle du sujet uniquement
-  parce qu'elle est petite ;
-- inventer des éléments qui ne sont pas présents.
-
-============================================================
-AUTO-VÉRIFICATION AVANT RÉPONSE
-============================================================
-
-Avant de produire la grille finale, vérifie mentalement :
-
-1. Quel est le sujet principal demandé ?
-2. Est-il réellement présent dans la photographie ?
-3. La silhouette du sujet est-elle reconnaissable ?
-4. Ses caractéristiques principales sont-elles conservées ?
-5. Les éléments secondaires prennent-ils trop de place ?
-6. La grille ressemble-t-elle davantage au sujet demandé
-   qu'à une simple répartition de pixels ?
-7. La composition générale correspond-elle à la photographie ?
-8. Les proportions sont-elles cohérentes ?
-9. Le nombre de couleurs est-il respecté ?
-10. La grille respecte-t-elle exactement les dimensions demandées ?
-
-Si quelque chose ne correspond pas au sujet principal,
-CORRIGE LA GRILLE AVANT DE RÉPONDRE.
-
-============================================================
-PARAMÈTRES EXACTS DU PATRON
-============================================================
-
-Largeur : ${W} mailles
-Hauteur : ${H} mailles
-Nombre maximum de couleurs : ${C}
-
-============================================================
-RÈGLES ABSOLUES DE LA GRILLE
-============================================================
-
-- Il doit y avoir EXACTEMENT ${H} lignes.
-- Chaque ligne doit contenir EXACTEMENT ${W} cases.
-- Chaque case correspond à UNE maille.
-- Une case contient uniquement un numéro de couleur.
-- Les numéros commencent à 0.
-- Les numéros autorisés vont de 0 à ${C - 1}.
-- Aucun numéro ne doit être supérieur ou égal à ${C}.
-
-Pour économiser de la place, la grille doit être fournie
-sous forme de chaînes de caractères.
-
-Exemple pour une largeur de 5 :
-
-"00120"
-
-Cela signifie :
-
-[0, 0, 1, 2, 0]
-
-Tu dois produire exactement ${H} chaînes.
-
-Chaque chaîne doit contenir exactement ${W} caractères.
-
-Ne mets aucun espace dans les chaînes.
-
-============================================================
-PALETTE
-============================================================
-
-La palette doit contenir uniquement les couleurs réellement
-utilisées dans la grille.
-
-Maximum ${C} couleurs.
-
-Toutes les couleurs doivent être fournies sous forme de codes HEX.
-
-============================================================
-SORTIE
-============================================================
-
-Réponds uniquement avec le JSON demandé par le schéma.
-
-Aucun texte avant ou après le JSON.
+Réponds exclusivement avec un JSON valide.
 `;
 
-    // ============================================================
-    // 7. SCHÉMA JSON STRICT
-    // ============================================================
+      const result =
+        await callOpenAI({
+          apiKey,
+          imageDataUrl,
+          prompt,
+          maxTokens: 3000
+        });
 
-    const schema = {
+      let analysis;
 
-      type: "object",
+      try {
+        analysis =
+          extractJson(result);
+      } catch (error) {
 
-      properties: {
+        console.error(
+          "Réponse IA non JSON :",
+          result
+        );
 
-        description: {
-          type: "string"
-        },
+        return res.status(500).json({
+          error:
+            "L'IA a renvoyé une réponse impossible à interpréter."
+        });
 
-        elements: {
+      }
 
-          type: "array",
+      const cleaned =
+        cleanAnalysis(analysis);
 
-          items: {
+      return res.status(200).json(cleaned);
+    }
 
-            type: "object",
 
-            properties: {
+    /* =========================================================
+       ÉTAPE 2 : GÉNÉRATION DU PATRON
+       ========================================================= */
 
-              type: {
-                type: "string"
-              },
+    if (action === "generate") {
 
-              description: {
-                type: "string"
-              },
+      const width =
+        clamp(
+          parseInt(form.get("width"), 10) || 60,
+          20,
+          120
+        );
 
-              importance: {
-                type: "string"
-              }
+      const height =
+        clamp(
+          parseInt(form.get("height"), 10) || 60,
+          20,
+          120
+        );
 
-            },
+      const colors =
+        clamp(
+          parseInt(form.get("colors"), 10) || 8,
+          2,
+          20
+        );
 
-            required: [
-              "type",
-              "description",
-              "importance"
-            ],
+      let analysis = null;
 
-            additionalProperties: false
+      const analysisText =
+        form.get("analysis");
 
-          }
+      if (analysisText) {
 
-        },
-
-        palette: {
-
-          type: "array",
-
-          items: {
-            type: "string"
-          }
-
-        },
-
-        grid: {
-
-          type: "array",
-
-          items: {
-            type: "string"
-          }
-
+        try {
+          analysis =
+            JSON.parse(analysisText);
+        } catch (error) {
+          analysis = null;
         }
 
-      },
+      }
 
-      required: [
-        "description",
-        "elements",
-        "palette",
-        "grid"
-      ],
+      const prompt = buildGenerationPrompt({
+        width,
+        height,
+        colors,
+        analysis
+      });
 
-      additionalProperties: false
+      const result =
+        await callOpenAI({
+          apiKey,
+          imageDataUrl,
+          prompt,
+          maxTokens: 12000
+        });
 
-    };
+      let generated;
 
-    // ============================================================
-    // 8. APPEL OPENAI
-    // ============================================================
+      try {
 
-    const response = await fetch(
+        generated =
+          extractJson(result);
+
+      } catch (error) {
+
+        console.error(
+          "Réponse génération non JSON :",
+          result
+        );
+
+        return res.status(500).json({
+          error:
+            "L'IA n'a pas renvoyé un patron exploitable."
+        });
+
+      }
+
+      const validated =
+        validatePattern(
+          generated,
+          width,
+          height,
+          colors
+        );
+
+      if (!validated.valid) {
+
+        console.error(
+          "Patron invalide :",
+          validated.error
+        );
+
+        return res.status(500).json({
+          error:
+            "Le patron généré par l'IA n'est pas valide. Réessaie avec une autre génération."
+        });
+
+      }
+
+      return res.status(200).json({
+        width,
+        height,
+        colors,
+        palette:
+          validated.palette,
+        grid:
+          validated.grid
+      });
+    }
+
+
+    return res.status(400).json({
+      error: "Action inconnue."
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    return res.status(500).json({
+      error:
+        error.message ||
+        "Une erreur est survenue."
+    });
+
+  }
+}
+
+
+/* ============================================================
+   APPEL OPENAI
+   ============================================================ */
+
+async function callOpenAI({
+  apiKey,
+  imageDataUrl,
+  prompt,
+  maxTokens
+}) {
+
+  const response =
+    await fetch(
       "https://api.openai.com/v1/responses",
       {
-
         method: "POST",
 
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
+          "Content-Type":
+            "application/json",
+
+          "Authorization":
+            `Bearer ${apiKey}`
         },
 
         body: JSON.stringify({
 
-          model: "gpt-5.6",
-
-          max_output_tokens:
-            Math.max(
-              12000,
-              Math.min(
-                30000,
-                W * H + 5000
-              )
-            ),
+          model: "gpt-5.6-luna",
 
           input: [
-
             {
               role: "user",
 
               content: [
-
                 {
                   type: "input_text",
                   text: prompt
@@ -444,429 +297,706 @@ Aucun texte avant ou après le JSON.
 
                 {
                   type: "input_image",
-                  image_url: image
+                  image_url:
+                    imageDataUrl
                 }
-
               ]
-
             }
-
           ],
 
-          text: {
-
-            format: {
-
-              type: "json_schema",
-
-              name: "crochet_pattern",
-
-              strict: true,
-
-              schema: schema
-
-            }
-
-          }
-
+          max_output_tokens:
+            maxTokens
         })
-
       }
     );
 
-    // ============================================================
-    // 9. GESTION DES ERREURS OPENAI
-    // ============================================================
 
-    if (!response.ok) {
+  if (!response.ok) {
 
-      const errorText =
-        await response.text();
+    const errorText =
+      await response.text();
 
-      let errorMessage =
-        errorText;
+    console.error(
+      "Erreur OpenAI :",
+      errorText
+    );
 
-      try {
+    throw new Error(
+      "Erreur lors de la communication avec l'IA."
+    );
+  }
 
-        const errorJson =
-          JSON.parse(errorText);
 
-        if (
-          errorJson?.error?.message
-        ) {
+  const data =
+    await response.json();
 
-          errorMessage =
-            errorJson.error.message;
 
-        }
+  return extractResponseText(data);
+}
 
-      } catch (_) {
-        // On conserve le message original
-      }
 
-      return res.status(response.status).json({
+/* ============================================================
+   EXTRACTION REPONSE OPENAI
+   ============================================================ */
 
-        error:
-          `OpenAI : ${errorMessage}`
+function extractResponseText(data) {
 
-      });
+  if (
+    typeof data.output_text === "string"
+  ) {
 
-    }
+    return data.output_text;
+  }
 
-    // ============================================================
-    // 10. RÉCUPÉRATION DE LA RÉPONSE
-    // ============================================================
 
-    const data =
-      await response.json();
+  if (
+    Array.isArray(data.output)
+  ) {
 
-    let outputText = "";
+    const parts = [];
 
-    if (
-      typeof data.output_text === "string"
+    for (
+      const item of data.output
     ) {
-
-      outputText =
-        data.output_text;
-
-    }
-
-    if (
-      !outputText &&
-      Array.isArray(data.output)
-    ) {
-
-      for (
-        const item of data.output
-      ) {
-
-        if (
-          item.type !== "message"
-        ) {
-          continue;
-        }
-
-        if (
-          !Array.isArray(item.content)
-        ) {
-          continue;
-        }
-
-        for (
-          const content of item.content
-        ) {
-
-          if (
-            content.type === "output_text" &&
-            typeof content.text === "string"
-          ) {
-
-            outputText +=
-              content.text;
-
-          }
-
-        }
-
-      }
-
-    }
-
-    if (!outputText) {
-
-      return res.status(500).json({
-
-        error:
-          "OpenAI n'a renvoyé aucun résultat exploitable."
-
-      });
-
-    }
-
-    // ============================================================
-    // 11. PARSING JSON
-    // ============================================================
-
-    let result;
-
-    try {
-
-      result =
-        JSON.parse(outputText);
-
-    } catch (error) {
-
-      const firstBrace =
-        outputText.indexOf("{");
-
-      const lastBrace =
-        outputText.lastIndexOf("}");
 
       if (
-        firstBrace === -1 ||
-        lastBrace === -1
+        !Array.isArray(item.content)
       ) {
-
-        return res.status(500).json({
-
-          error:
-            "L'IA a répondu, mais son résultat n'est pas un JSON valide."
-
-        });
-
+        continue;
       }
 
-      try {
+      for (
+        const content of item.content
+      ) {
 
-        const cleaned =
-          outputText.slice(
-            firstBrace,
-            lastBrace + 1
+        if (
+          typeof content.text === "string"
+        ) {
+
+          parts.push(
+            content.text
           );
 
-        result =
-          JSON.parse(cleaned);
-
-      } catch (_) {
-
-        return res.status(500).json({
-
-          error:
-            "L'IA a répondu, mais son résultat JSON est illisible."
-
-        });
-
-      }
-
-    }
-
-    // ============================================================
-    // 12. VÉRIFICATION PALETTE
-    // ============================================================
-
-    if (
-      !Array.isArray(result.palette)
-    ) {
-
-      return res.status(500).json({
-
-        error:
-          "La palette générée est invalide."
-
-      });
-
-    }
-
-    if (
-      result.palette.length < 1 ||
-      result.palette.length > C
-    ) {
-
-      return res.status(500).json({
-
-        error:
-          `La palette contient ${result.palette.length} couleurs au lieu de ${C} maximum.`
-
-      });
-
-    }
-
-    // ============================================================
-    // 13. VÉRIFICATION GRILLE
-    // ============================================================
-
-    if (
-      !Array.isArray(result.grid)
-    ) {
-
-      return res.status(500).json({
-
-        error:
-          "La grille générée est invalide."
-
-      });
-
-    }
-
-    if (
-      result.grid.length !== H
-    ) {
-
-      return res.status(500).json({
-
-        error:
-          `La grille contient ${result.grid.length} lignes au lieu de ${H}.`
-
-      });
-
-    }
-
-    // ============================================================
-    // 14. CONVERSION DES CHAÎNES EN TABLEAU
-    // ============================================================
-
-    const finalGrid = [];
-
-    for (
-      let y = 0;
-      y < H;
-      y++
-    ) {
-
-      const row =
-        result.grid[y];
-
-      if (
-        typeof row !== "string"
-      ) {
-
-        return res.status(500).json({
-
-          error:
-            `La ligne ${y + 1} de la grille n'est pas valide.`
-
-        });
-
-      }
-
-      if (
-        row.length !== W
-      ) {
-
-        return res.status(500).json({
-
-          error:
-            `La ligne ${y + 1} contient ${row.length} cases au lieu de ${W}.`
-
-        });
-
-      }
-
-      const numericRow = [];
-
-      for (
-        let x = 0;
-        x < W;
-        x++
-      ) {
-
-        const value =
-          Number(row[x]);
-
-        if (
-          !Number.isInteger(value) ||
-          value < 0 ||
-          value >= result.palette.length
-        ) {
-
-          return res.status(500).json({
-
-            error:
-              `Valeur de couleur invalide à la ligne ${y + 1}, case ${x + 1}.`
-
-          });
-
         }
 
-        numericRow.push(value);
-
-      }
-
-      finalGrid.push(
-        numericRow
-      );
-
-    }
-
-    // ============================================================
-    // 15. VÉRIFICATION FINALE
-    // ============================================================
-
-    if (
-      finalGrid.length !== H
-    ) {
-
-      return res.status(500).json({
-
-        error:
-          "Erreur interne : hauteur de grille incorrecte."
-
-      });
-
-    }
-
-    for (
-      const row of finalGrid
-    ) {
-
-      if (
-        row.length !== W
-      ) {
-
-        return res.status(500).json({
-
-          error:
-            "Erreur interne : largeur de grille incorrecte."
-
-        });
-
       }
 
     }
 
-    // ============================================================
-    // 16. RÉPONSE À L'APPLICATION
-    // ============================================================
+    if (parts.length) {
 
-    return res.status(200).json({
+      return parts.join("\n");
+    }
+  }
 
-      success: true,
 
-      version: "4.4",
+  throw new Error(
+    "Impossible de lire la réponse de l'IA."
+  );
+}
 
-      width: W,
 
-      height: H,
+/* ============================================================
+   EXTRACTION JSON
+   ============================================================ */
 
-      colors:
-        result.palette.length,
+function extractJson(text) {
 
-      description:
-        typeof result.description === "string"
-          ? result.description
-          : "",
+  if (
+    typeof text !== "string"
+  ) {
 
-      userDescription:
-        descriptionUtilisateur,
+    throw new Error(
+      "Réponse IA invalide."
+    );
+  }
 
-      elements:
-        Array.isArray(result.elements)
-          ? result.elements
-          : [],
 
-      palette:
-        result.palette,
+  let cleaned =
+    text.trim();
 
-      grid:
-        finalGrid
 
-    });
+  /*
+   * Si l'IA entoure le JSON avec
+   * ```json ... ```
+   */
+
+  cleaned =
+    cleaned
+      .replace(/^```json\s*/i, "")
+      .replace(/^```\s*/i, "")
+      .replace(/\s*```$/i, "")
+      .trim();
+
+
+  try {
+
+    return JSON.parse(cleaned);
 
   } catch (error) {
 
-    console.error(
-      "Erreur serveur :",
-      error
+    /*
+     * Deuxième tentative :
+     * on cherche le premier { et
+     * le dernier }.
+     */
+
+    const start =
+      cleaned.indexOf("{");
+
+    const end =
+      cleaned.lastIndexOf("}");
+
+
+    if (
+      start !== -1 &&
+      end !== -1 &&
+      end > start
+    ) {
+
+      const possibleJson =
+        cleaned.slice(
+          start,
+          end + 1
+        );
+
+      return JSON.parse(
+        possibleJson
+      );
+    }
+
+
+    throw error;
+  }
+}
+
+
+/* ============================================================
+   NETTOYAGE ANALYSE
+   ============================================================ */
+
+function cleanAnalysis(data) {
+
+  const dimensions =
+    Array.isArray(
+      data.recommended_dimensions
+    )
+      ? data.recommended_dimensions
+      : [];
+
+
+  const cleanedDimensions =
+    dimensions
+      .map(item => {
+
+        let width;
+        let height;
+
+        if (
+          Array.isArray(item)
+        ) {
+
+          width =
+            parseInt(
+              item[0],
+              10
+            );
+
+          height =
+            parseInt(
+              item[1],
+              10
+            );
+
+        } else {
+
+          width =
+            parseInt(
+              item.width,
+              10
+            );
+
+          height =
+            parseInt(
+              item.height,
+              10
+            );
+        }
+
+
+        if (
+          !width ||
+          !height
+        ) {
+
+          return null;
+        }
+
+
+        return {
+          width:
+            clamp(
+              width,
+              20,
+              120
+            ),
+
+          height:
+            clamp(
+              height,
+              20,
+              120
+            )
+        };
+
+      })
+      .filter(Boolean);
+
+
+  /*
+   * Si l'IA ne fournit pas suffisamment
+   * de dimensions, on crée quelques
+   * alternatives cohérentes.
+   */
+
+  if (
+    cleanedDimensions.length === 0
+  ) {
+
+    cleanedDimensions.push(
+      { width: 40, height: 40 },
+      { width: 60, height: 60 },
+      { width: 80, height: 80 }
     );
-
-    return res.status(500).json({
-
-      error:
-        error?.message ||
-        "Une erreur inattendue est survenue."
-
-    });
 
   }
 
+
+  const recommended =
+    data.recommended_dimensions?.[0];
+
+
+  const recommendedColors =
+    clamp(
+      parseInt(
+        data.recommended_colors,
+        10
+      ) || 8,
+      2,
+      20
+    );
+
+
+  const minColors =
+    clamp(
+      parseInt(
+        data.min_colors,
+        10
+      ) || recommendedColors - 2,
+      2,
+      recommendedColors
+    );
+
+
+  const maxColors =
+    clamp(
+      parseInt(
+        data.max_colors,
+        10
+      ) || recommendedColors + 2,
+      recommendedColors,
+      20
+    );
+
+
+  return {
+
+    description:
+      String(
+        data.description ||
+        data.image_description ||
+        data.summary ||
+        "L'image a été analysée."
+      ),
+
+    important_elements:
+      Array.isArray(
+        data.important_elements
+      )
+        ? data.important_elements
+            .map(String)
+            .slice(0, 12)
+        : [],
+
+    composition:
+      String(
+        data.composition ||
+        ""
+      ),
+
+    aspect_ratio:
+      String(
+        data.aspect_ratio ||
+        ""
+      ),
+
+    simplification_strategy:
+      String(
+        data.simplification_strategy ||
+        ""
+      ),
+
+    recommended_dimensions:
+      cleanedDimensions.slice(
+        0,
+        5
+      ),
+
+    recommended_colors:
+      recommendedColors,
+
+    min_colors:
+      minColors,
+
+    max_colors:
+      maxColors
+  };
+}
+
+
+/* ============================================================
+   PROMPT GENERATION PATRON
+   ============================================================ */
+
+function buildGenerationPrompt({
+  width,
+  height,
+  colors,
+  analysis
+}) {
+
+  let analysisSection = "";
+
+  if (analysis) {
+
+    analysisSection = `
+ANALYSE PRÉALABLE DE L'IMAGE :
+
+Sujet :
+${analysis.description || ""}
+
+Éléments importants :
+${
+  Array.isArray(
+    analysis.important_elements
+  )
+    ? analysis.important_elements.join(
+        ", "
+      )
+    : ""
+}
+
+Composition :
+${analysis.composition || ""}
+
+Rapport :
+${analysis.aspect_ratio || ""}
+
+Stratégie de simplification :
+${analysis.simplification_strategy || ""}
+`;
+
+  }
+
+
+  return `
+Tu es maintenant chargé de créer un patron de tapestry crochet à partir de l'image.
+
+${analysisSection}
+
+PARAMÈTRES DEMANDÉS :
+
+Largeur :
+${width} mailles
+
+Hauteur :
+${height} mailles
+
+Nombre maximum de couleurs :
+${colors}
+
+OBJECTIF :
+
+Créer un patron de crochet qui représente le sujet principal de l'image de manière reconnaissable.
+
+Il ne faut PAS chercher à reproduire chaque pixel de la photo.
+
+Il faut simplifier intelligemment.
+
+PRIORITÉS :
+
+1. Reconnaissance du sujet principal.
+2. Silhouette et formes principales.
+3. Placement correct des éléments.
+4. Contraste suffisant.
+5. Couleurs cohérentes.
+6. Suppression des détails inutiles.
+7. Esthétique du patron.
+
+IMPORTANT POUR LA GRILLE :
+
+- La grille doit contenir exactement ${height} lignes.
+- Chaque ligne doit contenir exactement ${width} valeurs.
+- Chaque valeur est un entier allant de 0 à ${colors - 1}.
+- L'entier correspond à l'index d'une couleur dans la palette.
+- Utilise réellement les couleurs de manière pertinente.
+- Évite les changements de couleur aléatoires.
+- Évite le bruit.
+- Les grandes zones doivent rester relativement homogènes.
+- Les contours importants doivent être conservés.
+
+PALETTE :
+
+Crée une palette de exactement ${colors} couleurs.
+
+Utilise des couleurs adaptées à l'image.
+
+Le fond doit être traité intelligemment : s'il est peu important, il doit rester simple.
+
+FORMAT DE RÉPONSE :
+
+Réponds UNIQUEMENT avec un JSON valide.
+
+Le JSON doit avoir exactement cette structure :
+
+{
+  "palette": [
+    "#000000"
+  ],
+  "grid": [
+    [0,1,1],
+    [0,0,1]
+  ]
+}
+
+La propriété "palette" doit contenir exactement ${colors} couleurs.
+
+La propriété "grid" doit contenir exactement ${height} lignes.
+
+Chaque ligne doit contenir exactement ${width} nombres.
+
+Aucun texte avant ou après le JSON.
+`;
+}
+
+
+/* ============================================================
+   VALIDATION PATRON
+   ============================================================ */
+
+function validatePattern(
+  data,
+  width,
+  height,
+  colors
+) {
+
+  if (
+    !data ||
+    !Array.isArray(data.palette) ||
+    !Array.isArray(data.grid)
+  ) {
+
+    return {
+      valid: false,
+      error:
+        "Structure de patron absente."
+    };
+  }
+
+
+  if (
+    data.palette.length !== colors
+  ) {
+
+    return {
+      valid: false,
+      error:
+        `La palette contient ${data.palette.length} couleurs au lieu de ${colors}.`
+    };
+  }
+
+
+  if (
+    data.grid.length !== height
+  ) {
+
+    return {
+      valid: false,
+      error:
+        `La grille contient ${data.grid.length} lignes au lieu de ${height}.`
+    };
+  }
+
+
+  const palette =
+    data.palette.map(
+      color =>
+        normalizeHex(color)
+    );
+
+
+  if (
+    palette.some(
+      color => !color
+    )
+  ) {
+
+    return {
+      valid: false,
+      error:
+        "Une ou plusieurs couleurs sont invalides."
+    };
+  }
+
+
+  for (
+    let rowIndex = 0;
+    rowIndex < height;
+    rowIndex++
+  ) {
+
+    const row =
+      data.grid[rowIndex];
+
+
+    if (
+      !Array.isArray(row)
+    ) {
+
+      return {
+        valid: false,
+        error:
+          `La ligne ${rowIndex + 1} est invalide.`
+      };
+    }
+
+
+    if (
+      row.length !== width
+    ) {
+
+      return {
+        valid: false,
+        error:
+          `La ligne ${rowIndex + 1} contient ${row.length} cases au lieu de ${width}.`
+      };
+    }
+
+
+    for (
+      let colIndex = 0;
+      colIndex < width;
+      colIndex++
+    ) {
+
+      const value =
+        Number(
+          row[colIndex]
+        );
+
+
+      if (
+        !Number.isInteger(value) ||
+        value < 0 ||
+        value >= colors
+      ) {
+
+        return {
+          valid: false,
+          error:
+            `Valeur invalide à la position ${rowIndex + 1}, ${colIndex + 1}.`
+        };
+      }
+
+
+      row[colIndex] =
+        value;
+    }
+  }
+
+
+  return {
+
+    valid: true,
+
+    palette,
+
+    grid:
+      data.grid
+
+  };
+}
+
+
+/* ============================================================
+   UTILITAIRES
+   ============================================================ */
+
+function normalizeHex(value) {
+
+  if (
+    typeof value !== "string"
+  ) {
+
+    return null;
+  }
+
+
+  const color =
+    value.trim();
+
+
+  if (
+    /^#[0-9a-fA-F]{6}$/.test(
+      color
+    )
+  ) {
+
+    return color.toUpperCase();
+  }
+
+
+  if (
+    /^#[0-9a-fA-F]{3}$/.test(
+      color
+    )
+  ) {
+
+    return (
+      "#" +
+      color[1] + color[1] +
+      color[2] + color[2] +
+      color[3] + color[3]
+    ).toUpperCase();
+  }
+
+
+  return null;
+}
+
+
+function clamp(
+  value,
+  min,
+  max
+) {
+
+  return Math.min(
+    max,
+    Math.max(
+      min,
+      value
+    )
+  );
 }
